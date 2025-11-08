@@ -6,5 +6,5 @@
       "rootDir": "."
     },
     "includes": ["src", "typings", "./node_modules/@pdf-parser/tsconfig"],
-    "exclude": ["node_modules", "dist", "scripts"]
+    "exclude": ["node_modules", "dist", "scripts", "**/__tests__/**", "**/*.spec.ts"]
   }

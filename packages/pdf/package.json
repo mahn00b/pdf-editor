@@ -4,12 +4,17 @@
   "private": true,
   "scripts": {
     "build": "tsc src/index.ts --outDir dist",
-    "test": "echo 'Add test script here'",
+    "test": "vitest",
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
     "@pdf-parser/eslint-config": "workspace:*",
     "@pdf-parser/typescript-config": "workspace:*",
-    "typescript": "^5.9.3"
+    "@types/node": "^20.11.24",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
   }
 }
