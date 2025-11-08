@@ -1,5 +1,5 @@
 {
-  "name": "@pdf-parser/project",
+  "name": "@pdf-parser/repo",
   "private": true,
   "scripts": {
     "build": "turbo build",
@@ -30,6 +30,6 @@
   },
   "packageManager": "pnpm@9.0.0",
   "engines": {
-    "node": ">=18"
+    "node": "v22.14.0"
   }
 }
