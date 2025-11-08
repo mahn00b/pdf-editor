@@ -1,0 +1,29 @@
+// src/ops/BaseOperation.ts
+import { v4 as uuidv4 } from 'uuid';
+import type { PDFDocument } from 'pdf-lib';
+import type { SerializableEdit, PdfEdit } from '../types';
+
+export abstract class BaseOperation<TEdit extends PdfEdit> {
+  public readonly id: string;
+  public readonly timestamp: number;
+
+  constructor(public readonly edit: TEdit) {
+    this.id = uuidv4();
+    this.timestamp = Date.now();
+  }
+
+  /** Every operation must implement its own apply logic */
+  abstract apply(pdfDoc: PDFDocument): Promise<PDFDocument> | PDFDocument;
+
+  /** Base serialization logic for CRDT tracking */
+  serialize(): SerializableEdit<TEdit> {
+    return {
+      id: this.id,
+      type: (this.constructor as any).operationType, // Each subclass sets static operationType
+      timestamp: this.timestamp,
+      edit: this.edit,
+    };
+  }
+}
+
+export default BaseOperation;
