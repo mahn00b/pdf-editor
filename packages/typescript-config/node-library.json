@@ -1,0 +1,14 @@
+{
+    "display": "Node Library",
+    "extends": "./base.json",
+    "compilerOptions": {
+      "allowImportingTsExtensions": true,
+      "emitDeclarationOnly": true,
+      "allowSyntheticDefaultImports": true,
+      "allowUmdGlobalAccess": true,
+      "declarationDir": "dist",
+      "outDir": "dist",
+      "inlineSourceMap": true,
+      "inlineSources": true
+    }
+  }

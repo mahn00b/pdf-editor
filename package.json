@@ -1,0 +1,35 @@
+{
+  "name": "@pdf-parser/project",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "clean:all": "pnpm run clean:node && pnpm run clean:turbo",
+    "clean:node": "rm -rf node_modules pnpm-lock.yaml ./**/node_modules",
+    "clean:turbo": "rm -rf .turbo ./**/.turbo",
+    "create:app": "func() { turbo gen workspace --type=app --name=\"$1\"; }; func",
+    "create:app:copy": "func() { turbo gen workspace --type=app --name=\"$2\" --copy=\"$1\";  }; func",
+    "create:package": "func() { turbo gen workspace --type=package --name=\"$1\"; }; func",
+    "create:package:copy": "func() { turbo gen workspace --type=package --name=\"$2\" --copy=\"$1\"; }; func",
+    "dev": "turbo dev",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "turbo lint",
+    "lint:commit": "commitlint --edit",
+    "lint:deps": "sherif",
+    "lint:deps:fix": "sherif --fix",
+    "prepare": "husky",
+    "repo:setup": "node ./bin/setup.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "husky": "^9.1.7",
+    "prettier": "^3.2.5",
+    "sherif": "^0.10.0",
+    "turbo": "^2.3.2",
+    "typescript": "5.5.4"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=18"
+  }
+}
