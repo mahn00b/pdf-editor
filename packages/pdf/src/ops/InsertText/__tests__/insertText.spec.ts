@@ -1,7 +1,7 @@
 // tests/InsertTextOperation.test.ts
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
-import { InsertTextOperation } from '../';
+import { InsertTextOperation } from '..';
 import type { InsertTextEdit } from '../../types';
 
 describe('InsertTextOperation', () => {

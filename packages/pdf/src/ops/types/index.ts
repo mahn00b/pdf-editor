@@ -6,8 +6,8 @@ export interface SerializableEdit<TEdit extends PdfEdit> {
 }
 
 export type PdfEdit =
-  | TextEdit
   | InsertTextEdit
+  | ReplaceTextEdit
   | HighlightEdit
   | StickyNoteEdit
   | FreeTextEdit
@@ -18,12 +18,12 @@ export interface BaseEdit {
   type: string;
 }
 
-export interface TextEdit extends BaseEdit {
-  type: 'text';
-  action: 'insert' | 'delete' | 'replace';
-  oldValue?: string;       // original text (for replace/delete)
-  newValue?: string;       // new text (for insert/replace)
-  position: { x: number; y: number }; // approximate coordinates
+export interface ReplaceTextEdit extends BaseEdit {
+  type: 'replace-text';
+  oldValue: string;
+  newValue: string;
+  color?: { r: number; g: number; b: number };
+  position: { x: number; y: number };
   font?: {
     family?: string;
     size?: number;
