@@ -8,6 +8,7 @@ export interface SerializableEdit<TEdit extends PdfEdit> {
 export type PdfEdit =
   | InsertTextEdit
   | ReplaceTextEdit
+  | DeleteTextEdit
   | HighlightEdit
   | StickyNoteEdit
   | FreeTextEdit
@@ -16,6 +17,18 @@ export type PdfEdit =
 export interface BaseEdit {
   page: number;
   type: string;
+}
+
+export interface DeleteTextEdit extends BaseEdit {
+  type: 'delete-text';
+  oldValue: string; // text to delete (for tracking / undo)
+  position: { x: number; y: number };
+  font?: {
+    family?: string;
+    size?: number;
+    weight?: string;
+    ligatures?: boolean;
+  };
 }
 
 export interface ReplaceTextEdit extends BaseEdit {
