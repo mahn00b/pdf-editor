@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.4.394",
     "uuid": "^13.0.0"
   }
 }
