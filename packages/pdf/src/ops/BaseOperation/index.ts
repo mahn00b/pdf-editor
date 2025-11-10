@@ -19,7 +19,8 @@ export abstract class BaseOperation<TEdit extends PdfEdit> {
   serialize(): SerializableEdit<TEdit> {
     return {
       id: this.id,
-      type: (this.constructor as any).operationType, // Each subclass sets static operationType
+      type: this.edit.type,
+      page: this.edit.page,
       timestamp: this.timestamp,
       edit: this.edit,
     };

@@ -1,5 +1,5 @@
 import type { InsertTextEdit, SerializableEdit } from '../types';
-import BaseOperation from '../BaseOperation';
+import BaseOperation from '../../BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export class InsertTextOperation extends BaseOperation<InsertTextEdit> {

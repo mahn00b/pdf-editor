@@ -1,6 +1,7 @@
 export interface SerializableEdit<TEdit extends PdfEdit> {
   id: string;
   type: string;
+  page: number;
   timestamp: number;
   edit: TEdit;
 }

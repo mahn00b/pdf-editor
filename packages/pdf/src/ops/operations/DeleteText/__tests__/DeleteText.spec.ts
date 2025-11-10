@@ -55,6 +55,7 @@ describe('DeleteTextOperation', () => {
     expect(serialized).toEqual({
       id: op.id,
       type: 'delete-text',
+      page: 0,
       timestamp: op.timestamp,
       edit,
     });
