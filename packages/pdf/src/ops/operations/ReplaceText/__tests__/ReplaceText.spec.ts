@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
-import { ReplaceTextOperation } from '../';
-import type { ReplaceTextEdit } from '../../types';
+import { ReplaceTextOperation } from '..';
+import type { ReplaceTextEdit } from '../../../types';
 
 describe('ReplaceTextOperation', () => {
   it('applies a replace-text operation to a PDF page', async () => {

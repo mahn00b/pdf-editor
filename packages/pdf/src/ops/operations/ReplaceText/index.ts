@@ -1,6 +1,6 @@
-import { BaseOperation } from '../BaseOperation';
+import { BaseOperation } from '../../BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import type { ReplaceTextEdit } from '../types';
+import type { ReplaceTextEdit } from '../../types';
 
 export class ReplaceTextOperation extends BaseOperation<ReplaceTextEdit> {
   static operationType = 'replace-text';

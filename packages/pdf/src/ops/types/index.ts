@@ -61,7 +61,7 @@ export interface InsertTextEdit extends BaseEdit {
 export interface HighlightEdit extends BaseEdit {
   type: 'highlight';
   rect: { x: number; y: number; width: number; height: number };
-  color?: string;
+  color?: { r: number; g: number; b: number };
 }
 
 export interface StickyNoteEdit extends BaseEdit {
