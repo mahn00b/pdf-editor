@@ -1,4 +1,3 @@
-// tests/DeleteTextOperation.test.ts
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
 import { DeleteTextOperation } from '..';

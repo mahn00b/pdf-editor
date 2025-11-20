@@ -1,5 +1,5 @@
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
-import { BaseOperation } from '../../BaseOperation';
+import { BaseOperation } from '../../../core/BaseOperation';
 import type { StickyNoteEdit } from '../../types';
 
 export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {

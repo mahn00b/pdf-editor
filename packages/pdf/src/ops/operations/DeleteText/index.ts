@@ -1,5 +1,5 @@
 // src/ops/text/DeleteTextOperation.ts
-import { BaseOperation } from '../../BaseOperation';
+import { BaseOperation } from '../../../core/BaseOperation';
 import { PDFDocument, rgb } from 'pdf-lib';
 import type { DeleteTextEdit } from '../../types';
 
