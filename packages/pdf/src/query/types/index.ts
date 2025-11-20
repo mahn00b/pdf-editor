@@ -5,3 +5,16 @@ export interface TextQueryResult {
   font?: { family: string; size: number };
   kerning?: number[];
 }
+
+export type RGB = { r: number; g: number; b: number };
+
+export interface ExtractedGlyph {
+  text: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fontName: string;
+  fontSize: number;
+  color: RGB;
+}

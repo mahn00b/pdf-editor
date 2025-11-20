@@ -1,17 +1,6 @@
-import { getDocument, PDFPageProxy, AnnotationType } from 'pdfjs-dist';
+import { getDocument, PDFPageProxy } from 'pdfjs-dist';
 import type { TextContent, TextItem, } from 'pdfjs-dist/types/src/display/api';
-type RGB = { r: number; g: number; b: number };
-
-interface ExtractedGlyph {
-  text: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  fontName: string;
-  fontSize: number;
-  color: RGB;
-}
+import type { ExtractedGlyph, RGB } from '../types';
 
 /**
  * Computes the transformed glyph width and height using vector magnitudes.
@@ -37,9 +26,8 @@ function getTextColor(item: any): RGB {
 /**
  * Extracts structured text data (glyphs) from a single PDF page.
  */
-async function extractTextFromPage(page: PDFPageProxy): Promise<ExtractedGlyph[]> {
+export async function extractTextFromPage(page: PDFPageProxy): Promise<ExtractedGlyph[]> {
   const textContent: TextContent = await page.getTextContent();
-  const annos = await page.getAnnotations();
   const glyphs: ExtractedGlyph[] = [];
 
   for (const item of textContent.items) {
