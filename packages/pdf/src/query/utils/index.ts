@@ -1,5 +1,5 @@
 import { getDocument, PDFPageProxy } from 'pdfjs-dist';
-import type { TextContent, TextItem, } from 'pdfjs-dist/types/src/display/api';
+import type { TextContent, TextItem } from 'pdfjs-dist/types/src/display/api';
 import type { ExtractedGlyph, RGB } from '../types';
 
 /**
