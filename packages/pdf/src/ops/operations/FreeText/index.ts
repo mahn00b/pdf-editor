@@ -1,5 +1,5 @@
 import { PDFDocument, rgb } from "pdf-lib";
-import { FreeTextEdit } from "../../types";
+import { FreeTextEdit } from "@types";
 import { BaseOperation } from "../../../core/BaseOperation";
 
 export class FreeTextOperation extends BaseOperation<FreeTextEdit> {

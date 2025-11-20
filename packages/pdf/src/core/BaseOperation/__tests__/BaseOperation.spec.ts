@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { BaseOperation } from '..';
-import type { InsertTextEdit } from '../../types';
+import type { InsertTextEdit } from '@types';
 import { PDFDocument } from 'pdf-lib';
 
 // Minimal concrete subclass of BaseOperation using a real PdfEdit type

@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PDFDocument } from "pdf-lib";
 import { RedactionOperation } from "..";
-import { RedactionEdit } from "../../../types";
+import { RedactionEdit } from "@types";
 
 describe("RedactionOperation", () => {
   let pdfDoc: PDFDocument;

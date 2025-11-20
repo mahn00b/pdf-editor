@@ -1,6 +1,6 @@
 import { BaseOperation } from '../../../core/BaseOperation';
 import { PDFDocument, rgb } from 'pdf-lib';
-import type { DeleteTextEdit } from '../../types';
+import type { DeleteTextEdit } from '@types';
 
 export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
   static operationType = 'delete-text';

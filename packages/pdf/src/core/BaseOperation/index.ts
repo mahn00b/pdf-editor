@@ -1,7 +1,6 @@
-// src/ops/BaseOperation.ts
 import { v4 as uuidv4 } from 'uuid';
 import type { PDFDocument } from 'pdf-lib';
-import type { SerializableEdit, PdfEdit } from '../../ops/types';
+import type { SerializableEdit, PdfEdit } from '@types';
 
 export abstract class BaseOperation<TEdit extends PdfEdit> {
   public readonly id: string;

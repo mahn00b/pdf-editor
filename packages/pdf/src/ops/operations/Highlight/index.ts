@@ -1,6 +1,6 @@
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { BaseOperation } from '../../../core/BaseOperation';
-import type { HighlightEdit } from '../../types';
+import type { HighlightEdit } from '@types';
 
 export class HighlightOperation extends BaseOperation<HighlightEdit> {
   constructor(edit: HighlightEdit) {

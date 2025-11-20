@@ -1,5 +1,5 @@
 import { PDFDocument, rgb } from "pdf-lib";
-import { RedactionEdit } from "../../types";
+import { RedactionEdit } from "@types";
 import { BaseOperation } from "../../../core/BaseOperation";
 
 export class RedactionOperation extends BaseOperation<RedactionEdit> {

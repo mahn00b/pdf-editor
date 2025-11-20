@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PDFDocument } from "pdf-lib";
 import { FreeTextOperation } from "..";
-import { FreeTextEdit } from "../../../types";
+import { FreeTextEdit } from "@types";
 
 describe("AddFreeTextBoxOperation", () => {
   let pdfDoc: PDFDocument;
