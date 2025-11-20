@@ -14,6 +14,7 @@ vi.mock('pdfjs-dist', () => ({
     promise: Promise.resolve({
       numPages: 2,
       getPage: vi.fn(async (pageNum: number) => ({ id: pageNum })),
+      destroy: vi.fn(),
     }),
   })),
 }));
