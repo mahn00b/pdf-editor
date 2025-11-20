@@ -1,7 +1,7 @@
 // src/ops/text/DeleteTextOperation.ts
-import { BaseOperation } from '../BaseOperation';
+import { BaseOperation } from '../../BaseOperation';
 import { PDFDocument, rgb } from 'pdf-lib';
-import type { DeleteTextEdit } from '../types';
+import type { DeleteTextEdit } from '../../types';
 
 export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
   static operationType = 'delete-text';
@@ -14,7 +14,6 @@ export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
     const estimatedWidth = (this.edit.oldValue?.length ?? 5) * (fontSize * 0.5);
     const estimatedHeight = fontSize * 1.2;
 
-    // Draw a white rectangle (as an erasure visual placeholder)
     page.drawRectangle({
       x: position.x,
       y: position.y - fontSize * 0.25,

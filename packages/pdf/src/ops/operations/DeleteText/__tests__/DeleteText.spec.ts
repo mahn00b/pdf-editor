@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
 import { DeleteTextOperation } from '..';
-import type { DeleteTextEdit } from '../../types';
+import type { DeleteTextEdit } from '../../../types';
 
 describe('DeleteTextOperation', () => {
   it('applies a delete-text operation without throwing', async () => {
@@ -55,6 +55,7 @@ describe('DeleteTextOperation', () => {
     expect(serialized).toEqual({
       id: op.id,
       type: 'delete-text',
+      page: 0,
       timestamp: op.timestamp,
       edit,
     });

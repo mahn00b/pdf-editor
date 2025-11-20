@@ -13,13 +13,14 @@ export abstract class BaseOperation<TEdit extends PdfEdit> {
   }
 
   /** Every operation must implement its own apply logic */
-  abstract apply(pdfDoc: PDFDocument): Promise<PDFDocument> | PDFDocument;
+  abstract apply(pdfDoc: PDFDocument): Promise<ThisType<this>> | ThisType<this>;
 
   /** Base serialization logic for CRDT tracking */
   serialize(): SerializableEdit<TEdit> {
     return {
       id: this.id,
-      type: (this.constructor as any).operationType, // Each subclass sets static operationType
+      type: this.edit.type,
+      page: this.edit.page,
       timestamp: this.timestamp,
       edit: this.edit,
     };

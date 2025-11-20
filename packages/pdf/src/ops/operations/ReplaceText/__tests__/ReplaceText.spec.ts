@@ -60,6 +60,7 @@ describe('ReplaceTextOperation', () => {
     expect(serialized).toEqual({
       id: op.id,
       type: 'replace-text',
+      page: 0,
       timestamp: op.timestamp,
       edit,
     });
