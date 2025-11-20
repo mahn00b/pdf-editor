@@ -17,7 +17,7 @@ describe('DeleteTextOperation', () => {
     };
 
     const op = new DeleteTextOperation(edit);
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     const bytes = await pdfDoc.save();
     const reloaded = await PDFDocument.load(bytes);

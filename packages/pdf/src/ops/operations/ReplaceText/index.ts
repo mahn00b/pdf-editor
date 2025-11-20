@@ -5,7 +5,7 @@ import type { ReplaceTextEdit } from '../../types';
 export class ReplaceTextOperation extends BaseOperation<ReplaceTextEdit> {
   static operationType = 'replace-text';
 
-  async apply(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
     const { page: pageIndex, newValue, position, font, color = { r: 0, g: 0, b: 0 } } = this.edit;
     const page = pdfDoc.getPage(pageIndex);
 

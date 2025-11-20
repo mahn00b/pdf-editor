@@ -1,4 +1,3 @@
-// src/ops/text/DeleteTextOperation.ts
 import { BaseOperation } from '../../../core/BaseOperation';
 import { PDFDocument, rgb } from 'pdf-lib';
 import type { DeleteTextEdit } from '../../types';
@@ -6,7 +5,7 @@ import type { DeleteTextEdit } from '../../types';
 export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
   static operationType = 'delete-text';
 
-  async apply(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
     const { page: pageIndex, position, font } = this.edit;
     const page = pdfDoc.getPage(pageIndex);
 

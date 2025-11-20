@@ -2,12 +2,12 @@ import { PDFDocument, rgb } from "pdf-lib";
 import { FreeTextEdit } from "../../types";
 import { BaseOperation } from "../../../core/BaseOperation";
 
-export class AddFreeTextBoxOperation extends BaseOperation<FreeTextEdit> {
+export class FreeTextOperation extends BaseOperation<FreeTextEdit> {
   constructor(edit: FreeTextEdit) {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<void> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<void> {
     const page = pdfDoc.getPage(this.edit.page);
 
     const {

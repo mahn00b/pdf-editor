@@ -21,7 +21,7 @@ describe("RedactionOperation", () => {
 
     const op = new RedactionOperation(edit);
 
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     // Confirm PDF remains valid
     const bytes = await pdfDoc.save();

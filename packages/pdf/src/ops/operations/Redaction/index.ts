@@ -7,7 +7,7 @@ export class RedactionOperation extends BaseOperation<RedactionEdit> {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<void> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<void> {
     const page = pdfDoc.getPage(this.edit.page);
 
     const { rect } = this.edit;

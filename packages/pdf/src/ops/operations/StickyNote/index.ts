@@ -7,7 +7,7 @@ export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<this> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPages()[this.edit.page] as PDFPage;
     const { position, text } = this.edit;
 

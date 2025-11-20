@@ -7,7 +7,7 @@ export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
     const {
       page: pageIndex,
       value,

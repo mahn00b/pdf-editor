@@ -7,7 +7,7 @@ export class HighlightOperation extends BaseOperation<HighlightEdit> {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<this> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPages()[this.edit.page] as PDFPage;
     const { rect, color = { r: 1, g: 1, b: 0 } } = this.edit; // default yellow
 

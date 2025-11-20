@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PDFDocument } from "pdf-lib";
-import { AddFreeTextBoxOperation } from "..";
+import { FreeTextOperation } from "..";
 import { FreeTextEdit } from "../../../types";
 
 describe("AddFreeTextBoxOperation", () => {
@@ -21,9 +21,9 @@ describe("AddFreeTextBoxOperation", () => {
       color: { r: 255, g: 0, b: 0 }
     };
 
-    const op = new AddFreeTextBoxOperation(edit);
+    const op = new FreeTextOperation(edit);
 
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     // Serialize PDF to ensure no errors
     const bytes = await pdfDoc.save();
@@ -39,7 +39,7 @@ describe("AddFreeTextBoxOperation", () => {
       position: { x: 10, y: 20 },
     };
 
-    const op = new AddFreeTextBoxOperation(edit);
+    const op = new FreeTextOperation(edit);
     const serialized = op.serialize();
 
     expect(serialized).toHaveProperty("id");
