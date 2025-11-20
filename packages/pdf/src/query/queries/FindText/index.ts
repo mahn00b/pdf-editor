@@ -92,5 +92,7 @@ export async function findText(
     }
   }
 
+  await pdf.destroy();
+
   return results;
 }

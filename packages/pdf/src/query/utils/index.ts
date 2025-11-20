@@ -67,6 +67,8 @@ export async function extractTextFromDoc(pdfBuffer: ArrayBuffer): Promise<Extrac
     allGlyphs.push(...pageGlyphs);
   }
 
+  await pdf.destroy();
+
   return allGlyphs;
 }
 
