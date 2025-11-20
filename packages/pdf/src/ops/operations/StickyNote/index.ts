@@ -1,6 +1,6 @@
-import { PDFDocument, rgb } from 'pdf-lib';
+import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { BaseOperation } from '../../BaseOperation';
-import type { StickyNoteEdit } from '../types';
+import type { StickyNoteEdit } from '../../types';
 
 export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {
   constructor(edit: StickyNoteEdit) {
@@ -8,7 +8,7 @@ export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {
   }
 
   async apply(pdfDoc: PDFDocument): Promise<this> {
-    const page = pdfDoc.getPages()[this.edit.page];
+    const page = pdfDoc.getPages()[this.edit.page] as PDFPage;
     const { position, text } = this.edit;
 
     // Draw a small yellow square as a visual marker for the note

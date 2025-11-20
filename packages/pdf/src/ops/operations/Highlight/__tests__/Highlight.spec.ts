@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
 import { HighlightOperation } from '../';
-import type { HighlightEdit } from '../../types';
+import type { HighlightEdit } from '../../../types';
 
 describe('HighlightOperation', () => {
   it('applies a highlight overlay to the correct page', async () => {

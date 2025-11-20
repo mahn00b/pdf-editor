@@ -1,4 +1,4 @@
-import type { InsertTextEdit, SerializableEdit } from '../types';
+import type { InsertTextEdit } from '../../types';
 import BaseOperation from '../../BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
