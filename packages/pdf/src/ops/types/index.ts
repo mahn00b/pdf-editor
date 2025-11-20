@@ -76,6 +76,7 @@ export interface FreeTextEdit extends BaseEdit {
   text: string;
   position: { x: number; y: number };
   font?: { family?: string; size?: number; weight?: string };
+  color?: { r: number; g: number; b: number };
 }
 
 export interface RedactionEdit extends BaseEdit {
