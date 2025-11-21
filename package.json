@@ -1,5 +1,5 @@
 {
-  "name": "@pdf-parser/repo",
+  "name": "pdf-editor",
   "private": true,
   "scripts": {
     "build": "turbo build",
