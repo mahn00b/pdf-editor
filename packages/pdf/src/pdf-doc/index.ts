@@ -17,8 +17,8 @@ import { DeleteTextOperation } from '../ops/operations/DeleteText';
 import { ReplaceTextOperation } from '../ops/operations/ReplaceText';
 import { HighlightOperation } from '../ops/operations/Highlight';
 import { StickyNoteOperation } from '../ops/operations/StickyNote';
-import { FreeTextOperation } from '../ops/operations/FreeText';      // NEW
-import { RedactionOperation } from '../ops/operations/Redaction';    // NEW
+import { FreeTextOperation } from '../ops/operations/FreeText';
+import { RedactionOperation } from '../ops/operations/Redaction';
 import { findText } from '@query/queries/FindText';
 
 export class PdfDoc {
