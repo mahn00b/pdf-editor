@@ -54,6 +54,12 @@ export class PdfDoc {
   // -----------------------------
   // INSERT TEXT
   // -----------------------------
+  /**
+   * Inserts text into the PDF at a specified position.
+   * 
+   * @param edit - The insert text edit configuration containing the text value, position, and optional font/color settings
+   * @returns The PdfDoc instance for method chaining
+   */
   async insertText(edit: InsertTextEdit) {
     await new InsertTextOperation(edit).applyEdit(this.pdf);
     return this;
@@ -62,6 +68,12 @@ export class PdfDoc {
   // -----------------------------
   // DELETE TEXT
   // -----------------------------
+  /**
+   * Deletes text from the PDF at a specified position.
+   * 
+   * @param edit - The delete text edit configuration containing the oldValue (text being removed), position, and optional font settings
+   * @returns The PdfDoc instance for method chaining
+   */
   async deleteText(edit: DeleteTextEdit) {
     await new DeleteTextOperation(edit).applyEdit(this.pdf);
     return this;
@@ -70,6 +82,12 @@ export class PdfDoc {
   // -----------------------------
   // REPLACE TEXT
   // -----------------------------
+  /**
+   * Replaces existing text in the PDF with new text.
+   * 
+   * @param edit - The replace text edit configuration containing oldValue, newValue, position, and optional font/color settings
+   * @returns The PdfDoc instance for method chaining
+   */
   async replaceText(edit: ReplaceTextEdit) {
     await new ReplaceTextOperation(edit).applyEdit(this.pdf);
     return this;
@@ -78,6 +96,12 @@ export class PdfDoc {
   // -----------------------------
   // HIGHLIGHT
   // -----------------------------
+  /**
+   * Adds a highlight annotation to a rectangular area in the PDF.
+   * 
+   * @param edit - The highlight edit configuration containing the rectangle dimensions and optional color
+   * @returns The PdfDoc instance for method chaining
+   */
   async highlight(edit: HighlightEdit) {
     await new HighlightOperation(edit).applyEdit(this.pdf);
     return this;
@@ -86,6 +110,12 @@ export class PdfDoc {
   // -----------------------------
   // STICKY NOTE
   // -----------------------------
+  /**
+   * Adds a sticky note annotation to the PDF at a specified position.
+   * 
+   * @param edit - The sticky note edit configuration containing the text content and position
+   * @returns The PdfDoc instance for method chaining
+   */
   async stickyNote(edit: StickyNoteEdit) {
     await new StickyNoteOperation(edit).applyEdit(this.pdf);
     return this;
@@ -94,6 +124,12 @@ export class PdfDoc {
   // -----------------------------
   // FREE TEXT BOX
   // -----------------------------
+  /**
+   * Adds a free text annotation (text box) to the PDF at a specified position.
+   * 
+   * @param edit - The free text edit configuration containing the text, position, and optional font/color settings
+   * @returns The PdfDoc instance for method chaining
+   */
   async freeText(edit: FreeTextEdit) {
     await new FreeTextOperation(edit).applyEdit(this.pdf);
     return this;
@@ -102,6 +138,12 @@ export class PdfDoc {
   // -----------------------------
   // REDACTION
   // -----------------------------
+  /**
+   * Redacts (permanently removes) content from a rectangular area in the PDF.
+   * 
+   * @param edit - The redaction edit configuration containing the rectangle dimensions to redact
+   * @returns The PdfDoc instance for method chaining
+   */
   async redact(edit: RedactionEdit) {
     await new RedactionOperation(edit).applyEdit(this.pdf);
     return this;
