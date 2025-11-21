@@ -1,4 +1,3 @@
-
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PDFDocument } from "pdf-lib";
 import { RedactionOperation } from "..";
