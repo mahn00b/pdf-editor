@@ -1,0 +1,26 @@
+{
+  "name": "@pdf-editor/storage",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@pdf-parser/eslint-config": "workspace:*",
+    "@pdf-parser/typescript-config": "workspace:*",
+    "@pdf-editor/pdf": "workspace:*",
+    "@types/node": "^20.11.24",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
+  },
+  "dependencies": {
+    "dexie": "^4.2.1"
+  },
+  "peerDependencies": {
+    "@pdf-editor/pdf": "workspace:*"
+  }
+}

@@ -1,0 +1,14 @@
+{
+    "extends": "@pdf-parser/typescript-config/node-library.json",
+    "compilerOptions": {
+      "typeRoots": ["typings/", "node_modules/@types"],
+      "baseUrl": ".",
+      "rootDir": ".",
+      "paths": {
+        "@types/*": ["src/types/*"],
+        "@types": ["src/types/index.ts"]
+      }
+    },
+    "includes": ["src", "typings", "./node_modules/@pdf-parser/tsconfig"],
+    "exclude": ["node_modules", "dist", "scripts"]
+  }
