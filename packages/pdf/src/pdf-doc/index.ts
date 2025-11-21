@@ -71,7 +71,7 @@ export class PdfDoc {
   /**
    * Deletes text from the PDF at a specified position.
    * 
-   * @param edit - The delete text edit configuration containing the text to delete, position, and optional font settings
+   * @param edit - The delete text edit configuration containing the oldValue (text being removed), position, and optional font settings
    * @returns The PdfDoc instance for method chaining
    */
   async deleteText(edit: DeleteTextEdit) {
@@ -85,7 +85,7 @@ export class PdfDoc {
   /**
    * Replaces existing text in the PDF with new text.
    * 
-   * @param edit - The replace text edit configuration containing old value, new value, position, and optional font/color settings
+   * @param edit - The replace text edit configuration containing oldValue, newValue, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
   async replaceText(edit: ReplaceTextEdit) {
@@ -113,7 +113,7 @@ export class PdfDoc {
   /**
    * Adds a sticky note annotation to the PDF at a specified position.
    * 
-   * @param edit - The sticky note edit configuration containing the note text and position
+   * @param edit - The sticky note edit configuration containing the text content and position
    * @returns The PdfDoc instance for method chaining
    */
   async stickyNote(edit: StickyNoteEdit) {
