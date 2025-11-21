@@ -100,6 +100,34 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8(@types/node@20.19.24)(jiti@1.21.7)
 
+  packages/storage:
+    dependencies:
+      dexie:
+        specifier: ^4.2.1
+        version: 4.2.1
+    devDependencies:
+      '@pdf-editor/pdf':
+        specifier: workspace:*
+        version: link:../pdf
+      '@pdf-parser/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@pdf-parser/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.19.24
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.6)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.8
+        version: 4.0.8(@types/node@20.19.24)(jiti@1.21.7)
+
   packages/typescript-config: {}
 
   packages/ui:
@@ -1336,6 +1364,9 @@ packages:
   del@5.1.0:
     resolution: {integrity: sha512-wH9xOVHnczo9jN2IW68BabcecVPxacIA3g/7z6vhSU/4stOKQzeCRK0yD0A24WiAAUJmmVpWqrERcTxnLo3AnA==}
     engines: {node: '>=8'}
+
+  dexie@4.2.1:
+    resolution: {integrity: sha512-Ckej0NS6jxQ4Po3OrSQBFddayRhTCic2DoCAG5zacOfOVB9P2Q5Xc5uL/nVa7ZVs+HdMnvUPzLFCB/JwpB6Csg==}
 
   diff@4.0.2:
     resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
@@ -4311,6 +4342,8 @@ snapshots:
       p-map: 3.0.0
       rimraf: 3.0.2
       slash: 3.0.0
+
+  dexie@4.2.1: {}
 
   diff@4.0.2: {}
 

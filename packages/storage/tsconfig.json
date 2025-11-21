@@ -5,6 +5,8 @@
       "baseUrl": ".",
       "rootDir": ".",
       "paths": {
+        "@schema/*": ["src/schema/*"],
+        "@config/*": ["src/config/*"],
         "@types/*": ["src/types/*"],
         "@types": ["src/types/index.ts"]
       }
