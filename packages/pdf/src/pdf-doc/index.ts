@@ -10,6 +10,8 @@ import {
   StickyNoteEdit,
   FreeTextEdit,
   RedactionEdit,
+  SerializableEdit,
+  PdfEdit
 } from '@types';
 
 // --- Operation Implementations
@@ -148,5 +150,66 @@ export class PdfDoc {
   async redact(edit: RedactionEdit) {
     await new RedactionOperation(edit).applyEdit(this.pdf);
     return this;
+  }
+
+  /**
+   * Applies a batch of SerializableEdit objects to this PdfDoc.
+   *
+   * @param {SerializableEdit[]} edits - Array of PDF edits to apply sequentially
+   * @returns {Promise<this>} Returns the same PdfDoc instance for chaining
+   *
+   * @throws {Error} If any edit has an unknown type
+   */
+  async applyOperations(operations: SerializableEdit<PdfEdit>[]): Promise<this> {
+    for (const op of operations) {
+
+      switch (op.edit.type) {
+        case "insert-text":
+          await this.insertText(op.edit as InsertTextEdit);
+          break;
+        case "delete-text":
+          await this.deleteText(op.edit as DeleteTextEdit);
+          break;
+        case "replace-text":
+          await this.replaceText(op.edit as ReplaceTextEdit);
+          break;
+        case "highlight":
+          await this.highlight(op.edit as HighlightEdit);
+          break;
+        case "note":
+          await this.stickyNote(op.edit as StickyNoteEdit);
+          break;
+        case "freeText":
+          await this.freeText(op.edit as FreeTextEdit);
+          break;
+        case "redact":
+          await this.redact(op.edit as RedactionEdit);
+          break;
+        default:
+          throw new Error(`Unknown edit type: ${(op.edit as any).type}`);
+      }
+    }
+
+    // Sync the internal rawData after all operations
+    await this.syncBytes();
+
+    return this;
+  }
+
+  /**
+   * Returns the current raw data of the PDF.
+   * Note: This returns the data as of the last save or load.
+   * To get the most up-to-date data including recent edits, call save() instead.
+   */
+  getRawData(): Uint8Array {
+    return this.rawData;
+  }
+
+  /**
+   * Serializes the current PDF document, updates the internal raw data, and returns it.
+   */
+  async save(): Promise<Uint8Array> {
+    await this.syncBytes();
+    return this.rawData;
   }
 }

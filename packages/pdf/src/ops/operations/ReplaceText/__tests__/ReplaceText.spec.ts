@@ -19,7 +19,7 @@ describe('ReplaceTextOperation', () => {
     };
 
     const op = new ReplaceTextOperation(edit);
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     // Serialize and reload to ensure valid PDF output
     const pdfBytes = await pdfDoc.save();

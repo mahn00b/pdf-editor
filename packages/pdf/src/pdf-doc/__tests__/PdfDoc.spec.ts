@@ -170,4 +170,29 @@ describe('PdfDoc', () => {
     expect(RedactionOperation).toHaveBeenCalledWith(edit);
     expect((RedactionOperation as any).mockApplyEdit).toHaveBeenCalled();
   });
+
+  it('should return raw data', async () => {
+    const initialBytes = new Uint8Array([1, 2, 3]);
+    vi.spyOn(PDFDocument, 'load').mockResolvedValue({
+      save: vi.fn().mockResolvedValue(new Uint8Array()),
+    } as any);
+
+    const doc = await PdfDoc.load(initialBytes);
+    expect(doc.getRawData()).toEqual(initialBytes);
+  });
+
+  it('should save the document and update raw data', async () => {
+    const newBytes = new Uint8Array([4, 5, 6]);
+    const mockPdfDoc = {
+      save: vi.fn().mockResolvedValue(newBytes),
+    };
+    vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockPdfDoc as any);
+
+    const doc = await PdfDoc.load(new Uint8Array());
+    const savedData = await doc.save();
+
+    expect(mockPdfDoc.save).toHaveBeenCalled();
+    expect(savedData).toEqual(newBytes);
+    expect(doc.getRawData()).toEqual(newBytes);
+  });
 });
