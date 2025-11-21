@@ -1,4 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
+import { readPDF, savePDF } from '@core/io';
 
 // --- Edit Types
 import {
@@ -31,7 +32,7 @@ export class PdfDoc {
   }
 
   static async load(data: ArrayBuffer | Uint8Array) {
-    const pdfDoc = await PDFDocument.load(data);
+    const pdfDoc = await readPDF(data);
     return new PdfDoc(pdfDoc, data instanceof Uint8Array ? data : new Uint8Array(data));
   }
 
@@ -39,7 +40,7 @@ export class PdfDoc {
    * Re-serializes the pdf-lib document and caches updated bytes.
    */
   private async syncBytes() {
-    this.rawData = await this.pdf.save();
+    this.rawData = await savePDF(this.pdf);
   }
 
   /**
@@ -56,7 +57,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Inserts text into the PDF at a specified position.
-   * 
+   *
    * @param edit - The insert text edit configuration containing the text value, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
@@ -70,7 +71,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Deletes text from the PDF at a specified position.
-   * 
+   *
    * @param edit - The delete text edit configuration containing the oldValue (text being removed), position, and optional font settings
    * @returns The PdfDoc instance for method chaining
    */
@@ -84,7 +85,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Replaces existing text in the PDF with new text.
-   * 
+   *
    * @param edit - The replace text edit configuration containing oldValue, newValue, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
@@ -98,7 +99,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Adds a highlight annotation to a rectangular area in the PDF.
-   * 
+   *
    * @param edit - The highlight edit configuration containing the rectangle dimensions and optional color
    * @returns The PdfDoc instance for method chaining
    */
@@ -112,7 +113,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Adds a sticky note annotation to the PDF at a specified position.
-   * 
+   *
    * @param edit - The sticky note edit configuration containing the text content and position
    * @returns The PdfDoc instance for method chaining
    */
@@ -126,7 +127,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Adds a free text annotation (text box) to the PDF at a specified position.
-   * 
+   *
    * @param edit - The free text edit configuration containing the text, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
@@ -140,7 +141,7 @@ export class PdfDoc {
   // -----------------------------
   /**
    * Redacts (permanently removes) content from a rectangular area in the PDF.
-   * 
+   *
    * @param edit - The redaction edit configuration containing the rectangle dimensions to redact
    * @returns The PdfDoc instance for method chaining
    */
