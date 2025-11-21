@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { extractTextFromPage } from '..';
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
+import type { ExtractedGlyph } from '@types';
 
 // Mock pdfjs-dist to avoid DOMMatrix error during import
 vi.mock('pdfjs-dist', () => ({
@@ -38,7 +39,7 @@ describe('extractTextFromPage', () => {
 
     expect(result).toHaveLength(2);
 
-    const [first, second] = result;
+    const [first, second] = result as [ExtractedGlyph, ExtractedGlyph];
 
     expect(first.text).toBe('Hello');
     expect(first.x).toBe(10);

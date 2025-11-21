@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { findText } from '..';
 import { extractTextFromPage } from '../../../utils';
-import type { ExtractedGlyph } from '../../../types';
+import type { ExtractedGlyph, TextQueryResult } from '@types';
 
 // Mock extractTextFromPage so we don’t depend on actual pdfjs parsing
 vi.mock('../../../utils', () => ({
@@ -47,12 +47,12 @@ describe('findText', () => {
       .mockResolvedValueOnce(mockGlyphsPage2);
 
     // Act
-    const results = await findText(new ArrayBuffer(10), 'Hello');
+    const results = (await findText(new ArrayBuffer(10), 'Hello')) as TextQueryResult[];
 
     // Assert
     expect(results).toHaveLength(1);
-    expect(results[0].page).toBe(1);
-    expect(results[0].str).toBe('Hello');
+    expect((results[0] as TextQueryResult).page).toBe(1);
+    expect((results[0] as TextQueryResult).str).toBe('Hello');
   });
 
   it('returns multiple matches if text occurs on multiple pages', async () => {
@@ -70,9 +70,9 @@ describe('findText', () => {
       .mockResolvedValueOnce(mockGlyphsPage1)
       .mockResolvedValueOnce(mockGlyphsPage2);
 
-    const results = await findText(new ArrayBuffer(10), 'hello');
+    const results = (await findText(new ArrayBuffer(10), 'hello')) as TextQueryResult[];
     expect(results.length).toBe(1);
-    expect(results[0].str).toBe('Hello'); // Should return original text
+    expect((results[0] as TextQueryResult).str).toBe('Hello'); // Should return original text
   });
 
   it('returns an empty array if no matches are found', async () => {
@@ -80,7 +80,7 @@ describe('findText', () => {
       .mockResolvedValueOnce(mockGlyphsPage1)
       .mockResolvedValueOnce(mockGlyphsPage2);
 
-    const results = await findText(new ArrayBuffer(10), 'missingtext');
+    const results = (await findText(new ArrayBuffer(10), 'missingtext')) as TextQueryResult[];
     expect(results).toEqual([]);
   });
 
@@ -89,7 +89,7 @@ describe('findText', () => {
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([]);
 
-    const results = await findText(new ArrayBuffer(10), 'Hello');
+    const results = (await findText(new ArrayBuffer(10), 'Hello')) as TextQueryResult[];
     expect(results).toEqual([]);
   });
 });

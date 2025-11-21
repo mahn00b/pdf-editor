@@ -1,8 +1,7 @@
-// tests/DeleteTextOperation.test.ts
 import { describe, it, expect } from 'vitest';
 import { PDFDocument } from 'pdf-lib';
 import { DeleteTextOperation } from '..';
-import type { DeleteTextEdit } from '../../../types';
+import type { DeleteTextEdit } from '@types';
 
 describe('DeleteTextOperation', () => {
   it('applies a delete-text operation without throwing', async () => {
@@ -18,7 +17,7 @@ describe('DeleteTextOperation', () => {
     };
 
     const op = new DeleteTextOperation(edit);
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     const bytes = await pdfDoc.save();
     const reloaded = await PDFDocument.load(bytes);

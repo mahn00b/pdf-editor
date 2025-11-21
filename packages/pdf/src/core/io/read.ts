@@ -1,6 +1,6 @@
 import { PDFDocument } from "pdf-lib";
 
-export async function readPDF(file: ArrayBuffer) {
+export async function readPDF(file: ArrayBuffer | Uint8Array) {
   try {
     return await PDFDocument.load(file);
   } catch (error) {

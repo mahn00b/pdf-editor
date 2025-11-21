@@ -1,13 +1,13 @@
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
-import { BaseOperation } from '../../BaseOperation';
-import type { StickyNoteEdit } from '../../types';
+import { BaseOperation } from '../../../core/BaseOperation';
+import type { StickyNoteEdit } from '@types';
 
 export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {
   constructor(edit: StickyNoteEdit) {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<this> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPages()[this.edit.page] as PDFPage;
     const { position, text } = this.edit;
 

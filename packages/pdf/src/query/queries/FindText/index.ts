@@ -1,6 +1,6 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import { extractTextFromPage } from '../../utils';
-import type { TextQueryResult, ExtractedGlyph } from '../../types';
+import type { TextQueryResult } from '@types';
 
 export async function findText(
   pdfData: ArrayBuffer | Uint8Array,

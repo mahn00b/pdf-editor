@@ -1,5 +1,5 @@
-import type { InsertTextEdit } from '../../types';
-import BaseOperation from '../../BaseOperation';
+import type { InsertTextEdit } from '@types';
+import BaseOperation from '../../../core/BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
@@ -7,7 +7,7 @@ export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
     super(edit);
   }
 
-  async apply(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
     const {
       page: pageIndex,
       value,

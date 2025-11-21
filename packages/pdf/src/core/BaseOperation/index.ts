@@ -1,7 +1,6 @@
-// src/ops/BaseOperation.ts
 import { v4 as uuidv4 } from 'uuid';
 import type { PDFDocument } from 'pdf-lib';
-import type { SerializableEdit, PdfEdit } from '../types';
+import type { SerializableEdit, PdfEdit } from '@types';
 
 export abstract class BaseOperation<TEdit extends PdfEdit> {
   public readonly id: string;
@@ -13,7 +12,7 @@ export abstract class BaseOperation<TEdit extends PdfEdit> {
   }
 
   /** Every operation must implement its own apply logic */
-  abstract apply(pdfDoc: PDFDocument): Promise<ThisType<this>> | ThisType<this>;
+  abstract applyEdit(pdfDoc: PDFDocument): Promise<ThisType<this>> | ThisType<this>;
 
   /** Base serialization logic for CRDT tracking */
   serialize(): SerializableEdit<TEdit> {
