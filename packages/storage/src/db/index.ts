@@ -34,11 +34,13 @@ async saveVersion(
   const compressedData = compressSync(pdfDoc.getRawData());
   const size = pdfDoc.getRawData().byteLength;
 
-  // Use getLatestVersion() to find the current version
-  const latestPdfDoc = await this.getLatestVersion(documentId);
-  const nextVersionNumber = latestPdfDoc
-    ? (latestPdfDoc.version ?? 0) + 1 // you may need to track version on PdfDoc instance
-    : 1;
+  // Query the versions table to find the latest version number
+  const latestVersion = await this.versions
+    .where('documentId')
+    .equals(documentId)
+    .sortBy('version')
+    .then(vs => vs.pop());
+  const nextVersionNumber = latestVersion ? latestVersion.version + 1 : 1;
 
   const version: Version = {
     documentId,
