@@ -157,9 +157,12 @@ export class PdfDoc {
   /**
    * Applies a batch of SerializableEdit objects to this PdfDoc.
    *
-   * @param {SerializableEdit[]} edits - Array of PDF edits to apply sequentially
-   * @returns {Promise<this>} Returns the same PdfDoc instance for chaining
+   * Operations are applied sequentially, in the order provided in the array.
+   * After all operations are applied, {@link syncBytes} is called automatically to update the internal PDF data.
+   * If the operations array is empty, no edits are applied, but {@link syncBytes} is still called and the method returns the instance.
    *
+   * @param {SerializableEdit<PdfEdit>[]} operations - Array of PDF edits to apply sequentially
+   * @returns {Promise<this>} Returns the same PdfDoc instance for chaining
    * @throws {Error} If any edit has an unknown type
    */
   async applyOperations(operations: SerializableEdit<PdfEdit>[]): Promise<this> {
