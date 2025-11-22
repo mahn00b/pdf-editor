@@ -66,7 +66,6 @@ describe('PdfVersionDB', () => {
     const ops = await db.operations.where('documentId').equals(documentId).toArray();
     expect(ops.length).toBe(1);
 
-    // Type assertion fix: Narrow the type or cast it
     const op = ops[0]?.op;
     if (op && op.edit.type === 'insert-text') {
       expect(op.edit.value).toBeDefined();
