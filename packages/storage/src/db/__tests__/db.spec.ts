@@ -104,9 +104,8 @@ describe('PdfVersionDB', () => {
       },
     };
 
-    // Save delta operation as version 2
-    await db.saveVersion(documentId, pdfDoc, false);
-    await db.saveOperation(documentId, 2, insertEdit);
+    // Save delta version with edits
+    await db.saveVersion(documentId, pdfDoc, false, [insertEdit]);
 
     const reconstructed = await db.getVersion(documentId, 2);
     expect(reconstructed).toBeInstanceOf(PdfDoc);
@@ -119,5 +118,22 @@ describe('PdfVersionDB', () => {
 
     const latest = await db.getLatestVersion(documentId);
     expect(latest).toBeInstanceOf(PdfDoc);
+  });
+
+  it('throws an error when saving delta version without edits', async () => {
+    const pdfDoc = await PdfDoc.load(validPdfBytes);
+
+    // Save full snapshot first
+    await db.saveVersion(documentId, pdfDoc, true);
+
+    // Attempt to save delta version without edits should throw
+    await expect(db.saveVersion(documentId, pdfDoc, false)).rejects.toThrow(
+      'Edits are required when saving a delta version (isFullSnapshot=false)'
+    );
+
+    // Attempt to save delta version with empty edits array should also throw
+    await expect(db.saveVersion(documentId, pdfDoc, false, [])).rejects.toThrow(
+      'Edits are required when saving a delta version (isFullSnapshot=false)'
+    );
   });
 });

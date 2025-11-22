@@ -28,9 +28,14 @@ export class PdfVersionDB extends Dexie {
 async saveVersion(
   documentId: string,
   pdfDoc: PdfDoc,
-  isFullSnapshot = false,
-  edits: SerializableEdit<PdfEdit>[] = []
+  isFullSnapshot: boolean,
+  edits?: SerializableEdit<PdfEdit>[]
 ) {
+  // Require edits when saving a delta version
+  if (!isFullSnapshot && (!edits || edits.length === 0)) {
+    throw new Error('Edits are required when saving a delta version (isFullSnapshot=false)');
+  }
+
   const compressedData = compressSync(pdfDoc.getRawData());
   const size = pdfDoc.getRawData().byteLength;
 
@@ -54,7 +59,7 @@ async saveVersion(
   const id = await this.transaction('rw', this.versions, this.documents, this.operations, async () => {
     const addedVersionId = await this.versions.add(version);
 
-    if (edits.length) {
+    if (edits && edits.length) {
       const opRecords: OperationRecord<PdfEdit>[] = edits.map(edit => ({
         documentId,
         version: nextVersionNumber,
