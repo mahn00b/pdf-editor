@@ -34,8 +34,8 @@
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
-    "@pdf-parser/eslint-config": "workspace:*",
-    "@pdf-parser/typescript-config": "workspace:*",
+    "@pdf-editor/eslint-config": "workspace:*",
+    "@pdf-editor/typescript-config": "workspace:*",
     "@types/node": "^20.11.24",
     "jsdom": "^27.2.0",
     "tsup": "^8.5.1",

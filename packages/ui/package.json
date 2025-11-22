@@ -1,5 +1,5 @@
 {
-  "name": "@pdf-parser/ui",
+  "name": "@pdf-editor/ui",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -14,8 +14,8 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@pdf-parser/eslint-config": "workspace:*",
-    "@pdf-parser/typescript-config": "workspace:*",
+    "@pdf-editor/eslint-config": "workspace:*",
+    "@pdf-editor/typescript-config": "workspace:*",
     "@turbo/gen": "^1.12.4",
     "@types/node": "^20.11.24",
     "@types/react": "18.3.0",

@@ -10,8 +10,8 @@
   },
   "devDependencies": {
     "@pdf-editor/pdf": "workspace:*",
-    "@pdf-parser/eslint-config": "workspace:*",
-    "@pdf-parser/typescript-config": "workspace:*",
+    "@pdf-editor/eslint-config": "workspace:*",
+    "@pdf-editor/typescript-config": "workspace:*",
     "@types/node": "^20.11.24",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^27.2.0",
