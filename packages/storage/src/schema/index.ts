@@ -1,6 +1,6 @@
 import { schema as v1 } from "./versions/v1.lock";
 
-const SCHEMA: Record<number, unknown> = {
+const SCHEMA: Record<number, Record<string, string>> = {
   [1]: v1,
 }
 
