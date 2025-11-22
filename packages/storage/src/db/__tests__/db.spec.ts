@@ -181,7 +181,7 @@ describe('PdfVersionDB', () => {
       .toArray();
 
     expect(ops.length).toBe(2);
-    
+
     // Verify first edit
     const op1 = ops.find(op => op.op.id === 'op1');
     expect(op1).toBeDefined();
