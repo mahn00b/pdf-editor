@@ -6,6 +6,20 @@ import type { Document, Version, OperationRecord } from '@types';
 import { getSchema } from '@schema';
 import { compressSync, decompressSync } from 'fflate';
 
+/**
+ * Database for managing PDF document versions using IndexedDB.
+ *
+ * This class implements a hybrid versioning strategy combining full snapshots and delta versions:
+ * - Full snapshots store complete compressed PDF data
+ * - Delta versions store only the operations/edits that were applied since the last snapshot
+ * - When retrieving a version, the system reconstructs it by starting from the nearest
+ *   full snapshot and applying all subsequent delta operations
+ *
+ * Tables:
+ * - `documents`: Stores document metadata (name, creation date, current version)
+ * - `versions`: Stores compressed PDF data for each version (full snapshots or deltas)
+ * - `operations`: Stores individual edit operations for delta versions
+ */
 export class PdfVersionDB extends Dexie {
   private latestPdfCache = new Map<string, PdfDoc>();
   documents!: Dexie.Table<Document, string>;
@@ -22,9 +36,19 @@ export class PdfVersionDB extends Dexie {
     this.operations = this.table('operations');
   }
 
-  // --------------------------
-  // Save a new version (compress PDF bytes)
-  // --------------------------
+  /**
+   * Saves a new version of a PDF document to the database.
+   *
+   * The PDF data is compressed before storage. For delta versions (isFullSnapshot=false),
+   * the edits parameter is required to track what changed.
+   *
+   * @param documentId - Unique identifier for the document
+   * @param pdfDoc - The PdfDoc instance to save
+   * @param isFullSnapshot - Whether this is a full snapshot (true) or a delta version (false)
+   * @param edits - Array of edit operations applied to create this version. Required when isFullSnapshot is false
+   * @returns Object containing the version ID and version number
+   * @throws Error if edits are not provided for a delta version
+   */
 async saveVersion(
   documentId: string,
   pdfDoc: PdfDoc,
@@ -84,17 +108,29 @@ async saveVersion(
   return { id, version: nextVersionNumber };
 }
 
-  // --------------------------
-  // Load a compressed version into PdfDoc
-  // --------------------------
+  /**
+   * Loads and decompresses a version's PDF data into a PdfDoc instance.
+   *
+   * @param version - The version record containing compressed PDF data
+   * @returns A PdfDoc instance loaded with the decompressed data
+   */
   private async loadVersionData(version: Version): Promise<PdfDoc> {
     const decompressed = decompressSync(version.compressedData);
     return PdfDoc.load(decompressed);
   }
 
-  // --------------------------
-  // Reconstruct a specific version
-  // --------------------------
+  /**
+   * Reconstructs a specific version of a PDF document.
+   *
+   * This method uses the hybrid versioning strategy: it finds the most recent full snapshot
+   * at or before the requested version, then applies all delta operations in sequence to
+   * reconstruct the exact state at the requested version number.
+   *
+   * @param documentId - Unique identifier for the document
+   * @param versionNumber - The version number to retrieve
+   * @returns A PdfDoc instance at the specified version, or null if not found
+   * @throws Error if no full snapshot is found in the version history
+   */
   async getVersion(documentId: string, versionNumber: number): Promise<PdfDoc | null> {
     const versions = await this.versions
       .where('documentId')
@@ -156,6 +192,16 @@ async saveVersion(
     return pdfDoc;
   }
 
+  /**
+   * Retrieves the most recent version of a PDF document.
+   *
+   * This method uses an in-memory cache to optimize performance for repeated access
+   * to the latest version. If not cached, it queries the database for the highest
+   * version number and reconstructs the document.
+   *
+   * @param documentId - Unique identifier for the document
+   * @returns The latest PdfDoc instance, or null if no versions exist
+   */
   async getLatestVersion(documentId: string): Promise<PdfDoc | null> {
     // Return cached instance if it exists
     if (this.latestPdfCache.has(documentId)) {
@@ -180,6 +226,17 @@ async saveVersion(
     return pdfDoc;
   }
 
+  /**
+   * Saves a single edit operation to the operations table.
+   *
+   * This method is used to record individual edits associated with a specific version.
+   * It's primarily useful for tracking operations independently of the version saving process.
+   *
+   * @param documentId - Unique identifier for the document
+   * @param version - The version number this operation belongs to
+   * @param edit - The serializable edit operation to save
+   * @returns The ID of the newly created operation record
+   */
   async saveOperation(documentId: string, version: number, edit: SerializableEdit<PdfEdit>) {
     const opRecord: OperationRecord<PdfEdit> = {
       documentId,
