@@ -27,15 +27,17 @@ import { findText } from '@query/queries/FindText';
 export class PdfDoc {
   private readonly pdf: PDFDocument;
   private rawData: Uint8Array; // always up-to-date version of the PDF as bytes
+  public version?: number;
 
-  private constructor(pdfDoc: PDFDocument, rawData: Uint8Array) {
+  private constructor(pdfDoc: PDFDocument, rawData: Uint8Array, version?: number) {
     this.pdf = pdfDoc;
     this.rawData = rawData;
+    this.version = version;
   }
 
-  static async load(data: ArrayBuffer | Uint8Array) {
+  static async load(data: ArrayBuffer | Uint8Array, version?: number): Promise<PdfDoc> {
     const pdfDoc = await readPDF(data);
-    return new PdfDoc(pdfDoc, data instanceof Uint8Array ? data : new Uint8Array(data));
+    return new PdfDoc(pdfDoc, data instanceof Uint8Array ? data : new Uint8Array(data), version);
   }
 
   /**
@@ -211,5 +213,13 @@ export class PdfDoc {
   async save(): Promise<Uint8Array> {
     await this.syncBytes();
     return this.rawData;
+  }
+
+  setVersion(version: number) {
+    this.version = version;
+  }
+
+  getVersion() {
+    return this.version ?? null;
   }
 }
