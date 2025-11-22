@@ -225,4 +225,9 @@ export class PdfDoc {
   getVersion() {
     return this.version ?? null;
   }
+
+  async clone(): Promise<PdfDoc> {
+    const bytes = await this.save();
+    return PdfDoc.load(bytes, this.version);
+  }
 }
