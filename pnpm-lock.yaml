@@ -81,10 +81,10 @@ importers:
         specifier: ^13.0.0
         version: 13.0.0
     devDependencies:
-      '@pdf-parser/eslint-config':
+      '@pdf-editor/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@pdf-parser/typescript-config':
+      '@pdf-editor/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -115,10 +115,10 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
     devDependencies:
-      '@pdf-parser/eslint-config':
+      '@pdf-editor/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@pdf-parser/typescript-config':
+      '@pdf-editor/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -154,10 +154,10 @@ importers:
         specifier: 19.0.0-rc-5c56b873-20241107
         version: 19.0.0-rc-5c56b873-20241107(react@19.0.0-rc-5c56b873-20241107)
     devDependencies:
-      '@pdf-parser/eslint-config':
+      '@pdf-editor/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
-      '@pdf-parser/typescript-config':
+      '@pdf-editor/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@turbo/gen':
