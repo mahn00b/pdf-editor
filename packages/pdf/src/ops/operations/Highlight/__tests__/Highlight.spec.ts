@@ -16,7 +16,7 @@ describe('HighlightOperation', () => {
     };
 
     const op = new HighlightOperation(edit);
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     const pdfBytes = await pdfDoc.save();
     const reloaded = await PDFDocument.load(pdfBytes);

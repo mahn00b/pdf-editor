@@ -18,7 +18,7 @@ describe('InsertTextOperation', () => {
     };
 
     const op = new InsertTextOperation(edit);
-    await op.apply(pdfDoc);
+    await op.applyEdit(pdfDoc);
 
     const pdfBytes = await pdfDoc.save();
     const loaded = await PDFDocument.load(pdfBytes);

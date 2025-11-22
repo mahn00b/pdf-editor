@@ -10,10 +10,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@core": path.resolve(__dirname, "src/core"),
-      "@ops": path.resolve(__dirname, "src/ops"),
-      "@query": path.resolve(__dirname, "src/query"),
-      "@types": path.resolve(__dirname, "src/types")
+      "@schema": path.resolve(__dirname, "src/schema/index.ts"),
+      "@config": path.resolve(__dirname, "src/config/index.ts"),
+      "@types": path.resolve(__dirname, "src/types/index.ts")
     },
   },
 });
