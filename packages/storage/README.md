@@ -1,1 +1,1 @@
-# `@pdf-parser/pdf`
+# `@pdf-editor/storage`
