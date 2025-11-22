@@ -113,15 +113,34 @@ async saveVersion(
     const deltaVersions = versions.slice(fullSnapshotIndex + 1);
     const editsToApply: SerializableEdit<PdfEdit>[] = [];
 
+    // Collect all delta version numbers
+    const deltaVersionNumbers = deltaVersions
+      .filter(v => !v.isFullSnapshot)
+      .map(v => v.version);
+
+    // Fetch all operations for these versions in a single query
+    let ops: OperationRecord<PdfEdit>[] = [];
+    if (deltaVersionNumbers.length > 0) {
+      ops = await this.operations
+        .where('documentId')
+        .equals(documentId)
+        .and(op => deltaVersionNumbers.includes(op.version))
+        .toArray();
+    }
+
+    // Group operations by version for quick lookup
+    const opsByVersion = new Map<number, OperationRecord<PdfEdit>[]>();
+    for (const op of ops) {
+      if (!opsByVersion.has(op.version)) {
+        opsByVersion.set(op.version, []);
+      }
+      opsByVersion.get(op.version)!.push(op);
+    }
+
     for (const v of deltaVersions) {
       if (!v.isFullSnapshot) {
-        const ops = await this.operations
-          .where('documentId')
-          .equals(documentId)
-          .and(op => op.version === v.version)
-          .toArray();
-
-        editsToApply.push(...ops.map(op => op.op));
+        const versionOps = opsByVersion.get(v.version) || [];
+        editsToApply.push(...versionOps.map(op => op.op));
       }
     }
 
