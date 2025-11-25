@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PDFArray, PDFDocument, PDFName, PDFObject } from 'pdf-lib';
-import { StickyNoteOperation } from '..';
+import { AddStickyNoteOperation } from '..';
 import type { AddStickyNoteEdit, SerializableEdit } from '@types';
 
 function makeSerializable(edit: AddStickyNoteEdit): Omit<SerializableEdit<AddStickyNoteEdit>, 'id' | 'timestamp'> {
@@ -20,7 +20,7 @@ describe('StickyNoteOperation', () => {
       position: { x: 50, y: 50 },
     };
 
-    const op = new StickyNoteOperation(serial);
+    const op = new AddStickyNoteOperation(serial);
     const {id, timestamp, ...serialized} = op.serialize();
     expect(serialized).toEqual(makeSerializable(serial));
   });
@@ -39,7 +39,7 @@ describe('StickyNoteOperation', () => {
       open: true,
     };
 
-    const op = new StickyNoteOperation(serial);
+    const op = new AddStickyNoteOperation(serial);
     await op.applyEdit(pdf);
 
     const page = pdf.getPage(0);
@@ -67,7 +67,7 @@ describe('StickyNoteOperation', () => {
       open: true,
     };
 
-    const op = new StickyNoteOperation(serial);
+    const op = new AddStickyNoteOperation(serial);
     const serialized = op.serialize();
     expect(serialized.edit.icon).toBe('Help');
     expect(serialized.edit.author).toBe('Alice');
@@ -82,7 +82,7 @@ describe('StickyNoteOperation', () => {
       position: { x: 10, y: 10 },
     };
 
-    const op = new StickyNoteOperation(serial);
+    const op = new AddStickyNoteOperation(serial);
     const serialized = op.serialize().edit;
 
     expect(serialized.icon).toBeUndefined();

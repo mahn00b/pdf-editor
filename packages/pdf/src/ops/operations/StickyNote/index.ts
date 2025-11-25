@@ -1,8 +1,8 @@
 import { PDFDocument, PDFPage, PDFArray, PDFName, PDFString } from 'pdf-lib';
 import { BaseOperation } from '../../../core/BaseOperation';
-import type { AddStickyNoteEdit, SerializableEdit } from '@types';
+import type { AddStickyNoteEdit } from '@types';
 
-export class StickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
+export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
   constructor(public readonly edit: AddStickyNoteEdit) {
     super(edit);
   }

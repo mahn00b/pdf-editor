@@ -19,10 +19,12 @@ import { InsertTextOperation } from '../ops/operations/InsertText';
 import { DeleteTextOperation } from '../ops/operations/DeleteText';
 import { ReplaceTextOperation } from '../ops/operations/ReplaceText';
 import { HighlightOperation } from '../ops/operations/Highlight';
-import { StickyNoteOperation } from '../ops/operations/StickyNote';
+import { AddStickyNoteOperation } from '../ops/operations/StickyNote';
 import { FreeTextOperation } from '../ops/operations/FreeText';
 import { RedactionOperation } from '../ops/operations/Redaction';
 import { findText } from '@query/queries/FindText';
+import BaseOperation from '@core/BaseOperation';
+import { T } from 'node_modules/vitest/dist/chunks/worker.d.DadbA89M';
 
 export class PdfDoc {
   private readonly pdf: PDFDocument;
@@ -118,7 +120,7 @@ export class PdfDoc {
    * @returns The PdfDoc instance for method chaining
    */
   async addStickyNote(edit: AddStickyNoteEdit): Promise<SerializableEdit<AddStickyNoteEdit>> {
-    return (await new StickyNoteOperation(edit).applyEdit(this.pdf)).serialize();
+    return (await new AddStickyNoteOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -160,32 +162,8 @@ export class PdfDoc {
    */
   async applyOperations(operations: SerializableEdit<PdfEdit>[]): Promise<this> {
     for (const op of operations) {
-
-      switch (op.edit.type) {
-        case "insert-text":
-          await this.insertText(op.edit as InsertTextEdit);
-          break;
-        case "delete-text":
-          await this.deleteText(op.edit as DeleteTextEdit);
-          break;
-        case "replace-text":
-          await this.replaceText(op.edit as ReplaceTextEdit);
-          break;
-        case "highlight":
-          await this.highlight(op.edit as HighlightEdit);
-          break;
-        case "add-sticky-note":
-          await this.addStickyNote(op.edit as AddStickyNoteEdit);
-          break;
-        case "free-text":
-          await this.freeText(op.edit as FreeTextEdit);
-          break;
-        case "redact":
-          await this.redact(op.edit as RedactionEdit);
-          break;
-        default:
-          throw new Error(`Unknown edit type: ${(op.edit as any).type}`);
-      }
+      const operation = PdfDoc.toEditType<BaseOperation<PdfEdit>>(op);
+      await operation.applyEdit(this.pdf);
     }
 
     // Sync the internal rawData after all operations
@@ -222,5 +200,26 @@ export class PdfDoc {
   async clone(): Promise<PdfDoc> {
     const bytes = await this.save();
     return PdfDoc.load(bytes, this.version);
+  }
+
+  static toEditType<TClass extends BaseOperation<PdfEdit>>(edit: SerializableEdit<PdfEdit>): TClass {
+    switch (edit.type) {
+        case "insert-text":
+          return new InsertTextOperation(edit.edit as InsertTextEdit) as TClass;
+        case "delete-text":
+          return new DeleteTextOperation(edit.edit as DeleteTextEdit) as TClass;
+        case "replace-text":
+          return new ReplaceTextOperation(edit.edit as ReplaceTextEdit) as TClass;
+        case "highlight":
+          return new HighlightOperation(edit.edit as HighlightEdit) as TClass;
+        case "add-sticky-note":
+          return new AddStickyNoteOperation(edit.edit as AddStickyNoteEdit) as TClass;
+        case "free-text":
+          return new FreeTextOperation(edit.edit as FreeTextEdit) as TClass;
+        case "redact":
+          return new RedactionOperation(edit.edit as RedactionEdit) as TClass;
+        default:
+          throw new Error(`Unknown edit type: ${(edit as any).type}`);
+      }
   }
 }

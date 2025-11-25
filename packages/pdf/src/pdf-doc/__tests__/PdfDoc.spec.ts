@@ -7,7 +7,7 @@ import { DeleteTextOperation } from '@ops/operations/DeleteText';
 import { HighlightOperation } from '@ops/operations/Highlight';
 import { InsertTextOperation } from '@ops/operations/InsertText';
 import { ReplaceTextOperation } from '@ops/operations/ReplaceText';
-import { StickyNoteOperation } from '@ops/operations/StickyNote';
+import { AddStickyNoteOperation } from '@ops/operations/StickyNote';
 import { FreeTextOperation } from '@ops/operations/FreeText';
 import { RedactionOperation } from '@ops/operations/Redaction';
 
@@ -104,8 +104,8 @@ describe('PdfDoc', () => {
 
     await doc.addStickyNote(edit);
 
-    expect(StickyNoteOperation).toHaveBeenCalledWith(edit);
-    expect((StickyNoteOperation as any).mockApplyEdit).toHaveBeenCalled();
+    expect(AddStickyNoteOperation).toHaveBeenCalledWith(edit);
+    expect((AddStickyNoteOperation as any).mockApplyEdit).toHaveBeenCalled();
   });
 
   it('should delegate freeText to FreeTextOperation', async () => {
