@@ -202,6 +202,21 @@ export class PdfDoc {
     return PdfDoc.load(bytes, this.version);
   }
 
+  async extractPageAsPdf(pageIndex: number): Promise<PdfDoc> {
+    const newPdfDoc = await PDFDocument.create();
+    const [copiedPage] = await newPdfDoc.copyPages(this.pdf, [pageIndex]);
+    newPdfDoc.addPage(copiedPage);
+    const bytes = await newPdfDoc.save();
+    return PdfDoc.load(bytes);
+  }
+
+  async replacePage(pageIndex: number, newPageDoc: PdfDoc): Promise<void> {
+    const [newPage] = await this.pdf.copyPages(newPageDoc.pdf, [0]);
+    this.pdf.removePage(pageIndex);
+    this.pdf.insertPage(pageIndex, newPage);
+    await this.syncBytes();
+  }
+
   static toEditType<TClass extends BaseOperation<PdfEdit>>(edit: SerializableEdit<PdfEdit>): TClass {
     switch (edit.type) {
         case "insert-text":
