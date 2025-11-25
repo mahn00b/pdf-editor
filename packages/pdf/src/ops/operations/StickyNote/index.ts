@@ -1,36 +1,43 @@
-import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
+import { PDFDocument, PDFPage, PDFArray, PDFName, PDFString } from 'pdf-lib';
 import { BaseOperation } from '../../../core/BaseOperation';
-import type { StickyNoteEdit } from '@types';
+import type { AddStickyNoteEdit, SerializableEdit } from '@types';
 
-export class StickyNoteOperation extends BaseOperation<StickyNoteEdit> {
-  constructor(edit: StickyNoteEdit) {
+export class StickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
+  constructor(public readonly edit: AddStickyNoteEdit) {
     super(edit);
   }
 
   async applyEdit(pdfDoc: PDFDocument): Promise<this> {
-    const page = pdfDoc.getPages()[this.edit.page] as PDFPage;
-    const { position, text } = this.edit;
+    const { page, position, text, icon = 'Note', author, open = false } = this.edit;
 
-    // Draw a small yellow square as a visual marker for the note
-    page.drawRectangle({
-      x: position.x,
-      y: position.y,
-      width: 16,
-      height: 16,
-      color: rgb(1, 1, 0),
-      borderColor: rgb(0.8, 0.8, 0),
-      borderWidth: 1,
-      opacity: 0.6,
-    });
+    const pdfPage: PDFPage = pdfDoc.getPages()[page] as PDFPage;
 
-    // Optionally draw note text nearby (debug-only, not for production PDF UX)
-    if (text) {
-      page.drawText(text, {
-        x: position.x + 20,
-        y: position.y + 2,
-        size: 10,
-        color: rgb(0, 0, 0),
-      });
+    const annotation = {
+      Type: 'Annot',
+      Subtype: 'Text',
+      Contents: PDFString.of(text),
+      Rect: [
+        position.x,
+        position.y,
+        position.x + 20,
+        position.y + 20,
+      ],
+      Name: icon,
+      T: author ?? undefined,
+      Open: open,
+    }
+
+
+    const context = pdfDoc.context.obj(annotation);
+    const pageAnnots = pdfPage.node.get(PDFName.of('Annots')) as PDFArray | undefined;
+
+    if (pageAnnots) {
+      pageAnnots.push(context);
+    } else {
+      pdfPage.node.set(
+        PDFName.of('Annots'),
+        pdfDoc.context.obj([context]),
+      );
     }
 
     return this;

@@ -13,72 +13,29 @@ import { RedactionOperation } from '@ops/operations/Redaction';
 
 // Shared spy for all operations, hoisted so it's available in mocks
 const { mockApplyEdit } = vi.hoisted(() => ({
-  mockApplyEdit: vi.fn().mockResolvedValue(undefined)
+  mockApplyEdit: vi.fn()
 }));
 
-// Define mocks explicitly to avoid hoisting issues with loops
-vi.mock('@ops/operations/DeleteText', () => {
+function createMockOp(name: string) {
   const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
     this.edit = edit;
-    this.applyEdit = mockApplyEdit;
+    this.applyEdit = vi.fn().mockImplementation(async () => {
+      await mockApplyEdit();
+      return this;
+    });
+    this.serialize = vi.fn().mockReturnValue({ ...edit, id: 'mock-id' });
   });
   (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { DeleteTextOperation: MockOp };
-});
+  return { [name]: MockOp };
+}
 
-vi.mock('@ops/operations/Highlight', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { HighlightOperation: MockOp };
-});
-
-vi.mock('@ops/operations/InsertText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { InsertTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/ReplaceText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { ReplaceTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/StickyNote', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { StickyNoteOperation: MockOp };
-});
-
-vi.mock('@ops/operations/FreeText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { FreeTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/Redaction', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { RedactionOperation: MockOp };
-});
+vi.mock('@ops/operations/DeleteText', () => createMockOp('DeleteTextOperation'));
+vi.mock('@ops/operations/Highlight', () => createMockOp('HighlightOperation'));
+vi.mock('@ops/operations/InsertText', () => createMockOp('InsertTextOperation'));
+vi.mock('@ops/operations/ReplaceText', () => createMockOp('ReplaceTextOperation'));
+vi.mock('@ops/operations/StickyNote', () => createMockOp('StickyNoteOperation'));
+vi.mock('@ops/operations/FreeText', () => createMockOp('FreeTextOperation'));
+vi.mock('@ops/operations/Redaction', () => createMockOp('RedactionOperation'));
 
 vi.mock('@query/queries/FindText', () => ({
   findText: vi.fn().mockResolvedValue([{ page: 0, text: 'Hello World', position: { x: 100, y: 200 } }]),
@@ -145,7 +102,7 @@ describe('PdfDoc', () => {
     const doc = await PdfDoc.load(new Uint8Array());
     const edit = { id: '5', type: 'sticky-note' } as any;
 
-    await doc.stickyNote(edit);
+    await doc.addStickyNote(edit);
 
     expect(StickyNoteOperation).toHaveBeenCalledWith(edit);
     expect((StickyNoteOperation as any).mockApplyEdit).toHaveBeenCalled();

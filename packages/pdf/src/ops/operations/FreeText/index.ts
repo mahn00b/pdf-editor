@@ -7,7 +7,7 @@ export class FreeTextOperation extends BaseOperation<FreeTextEdit> {
     super(edit);
   }
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<void> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPage(this.edit.page);
 
     const {
@@ -32,5 +32,7 @@ export class FreeTextOperation extends BaseOperation<FreeTextEdit> {
       color: rgbColor,
       lineHeight: font?.size ? font.size * 1.2 : 14,
     });
+
+    return this;
   }
 }

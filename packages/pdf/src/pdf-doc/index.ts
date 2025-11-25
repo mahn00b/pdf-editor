@@ -7,7 +7,7 @@ import {
   DeleteTextEdit,
   ReplaceTextEdit,
   HighlightEdit,
-  StickyNoteEdit,
+  AddStickyNoteEdit,
   FreeTextEdit,
   RedactionEdit,
   SerializableEdit,
@@ -65,9 +65,8 @@ export class PdfDoc {
    * @param edit - The insert text edit configuration containing the text value, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async insertText(edit: InsertTextEdit) {
-    await new InsertTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async insertText(edit: InsertTextEdit): Promise<SerializableEdit<InsertTextEdit>> {
+    return (await new InsertTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -79,9 +78,8 @@ export class PdfDoc {
    * @param edit - The delete text edit configuration containing the oldValue (text being removed), position, and optional font settings
    * @returns The PdfDoc instance for method chaining
    */
-  async deleteText(edit: DeleteTextEdit) {
-    await new DeleteTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async deleteText(edit: DeleteTextEdit): Promise<SerializableEdit<DeleteTextEdit>> {
+    return (await new DeleteTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -93,9 +91,8 @@ export class PdfDoc {
    * @param edit - The replace text edit configuration containing oldValue, newValue, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async replaceText(edit: ReplaceTextEdit) {
-    await new ReplaceTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async replaceText(edit: ReplaceTextEdit): Promise<SerializableEdit<ReplaceTextEdit>> {
+    return (await new ReplaceTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -107,9 +104,8 @@ export class PdfDoc {
    * @param edit - The highlight edit configuration containing the rectangle dimensions and optional color
    * @returns The PdfDoc instance for method chaining
    */
-  async highlight(edit: HighlightEdit) {
-    await new HighlightOperation(edit).applyEdit(this.pdf);
-    return this;
+  async highlight(edit: HighlightEdit): Promise<SerializableEdit<HighlightEdit>> {
+    return (await new HighlightOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -121,9 +117,8 @@ export class PdfDoc {
    * @param edit - The sticky note edit configuration containing the text content and position
    * @returns The PdfDoc instance for method chaining
    */
-  async stickyNote(edit: StickyNoteEdit) {
-    await new StickyNoteOperation(edit).applyEdit(this.pdf);
-    return this;
+  async addStickyNote(edit: AddStickyNoteEdit): Promise<SerializableEdit<AddStickyNoteEdit>> {
+    return (await new StickyNoteOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -135,9 +130,8 @@ export class PdfDoc {
    * @param edit - The free text edit configuration containing the text, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async freeText(edit: FreeTextEdit) {
-    await new FreeTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async freeText(edit: FreeTextEdit): Promise<SerializableEdit<FreeTextEdit>> {
+    return (await new FreeTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -149,9 +143,8 @@ export class PdfDoc {
    * @param edit - The redaction edit configuration containing the rectangle dimensions to redact
    * @returns The PdfDoc instance for method chaining
    */
-  async redact(edit: RedactionEdit) {
-    await new RedactionOperation(edit).applyEdit(this.pdf);
-    return this;
+  async redact(edit: RedactionEdit): Promise<SerializableEdit<RedactionEdit>> {
+    return (await new RedactionOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   /**
@@ -181,10 +174,10 @@ export class PdfDoc {
         case "highlight":
           await this.highlight(op.edit as HighlightEdit);
           break;
-        case "note":
-          await this.stickyNote(op.edit as StickyNoteEdit);
+        case "add-sticky-note":
+          await this.addStickyNote(op.edit as AddStickyNoteEdit);
           break;
-        case "freeText":
+        case "free-text":
           await this.freeText(op.edit as FreeTextEdit);
           break;
         case "redact":

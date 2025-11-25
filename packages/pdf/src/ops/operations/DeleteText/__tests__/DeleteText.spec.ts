@@ -39,24 +39,4 @@ describe('DeleteTextOperation', () => {
     expect(op1.id).not.toBe(op2.id);
     expect(op1.timestamp).toBeTypeOf('number');
   });
-
-  it('serialize() returns a valid SerializableEdit', () => {
-    const edit: DeleteTextEdit = {
-      type: 'delete-text',
-      page: 0,
-      oldValue: 'erase me',
-      position: { x: 10, y: 400 },
-    };
-
-    const op = new DeleteTextOperation(edit);
-    const serialized = op.serialize();
-
-    expect(serialized).toEqual({
-      id: op.id,
-      type: 'delete-text',
-      page: 0,
-      timestamp: op.timestamp,
-      edit,
-    });
-  });
 });

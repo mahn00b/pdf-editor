@@ -11,7 +11,7 @@ export type PdfEdit =
   | ReplaceTextEdit
   | DeleteTextEdit
   | HighlightEdit
-  | StickyNoteEdit
+  | AddStickyNoteEdit
   | FreeTextEdit
   | RedactionEdit;
 
@@ -65,14 +65,28 @@ export interface HighlightEdit extends BaseEdit {
   color?: { r: number; g: number; b: number };
 }
 
-export interface StickyNoteEdit extends BaseEdit {
-  type: 'note';
+export interface AddStickyNoteEdit extends BaseEdit {
+  type: 'add-sticky-note';
+  page: number;
+  position: {
+    x: number;
+    y: number;
+  };
   text: string;
-  position: { x: number; y: number };
+  icon?:
+    | 'Note'
+    | 'Comment'
+    | 'Help'
+    | 'Insert'
+    | 'Key'
+    | 'NewParagraph'
+    | 'Paragraph';
+  author?: string;
+  open?: boolean;
 }
 
 export interface FreeTextEdit extends BaseEdit {
-  type: 'freeText';
+  type: 'free-text';
   text: string;
   position: { x: number; y: number };
   font?: { family?: string; size?: number; weight?: string };

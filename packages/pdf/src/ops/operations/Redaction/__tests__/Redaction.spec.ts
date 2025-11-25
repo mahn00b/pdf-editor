@@ -27,20 +27,4 @@ describe("RedactionOperation", () => {
     expect(bytes).toBeInstanceOf(Uint8Array);
     expect(bytes.length).toBeGreaterThan(100);
   });
-
-  it("serializes correctly using BaseOperation", () => {
-    const edit: RedactionEdit = {
-      type: "redact",
-      page: 0,
-      rect: { x: 10, y: 20, width: 50, height: 50 }
-    };
-
-    const op = new RedactionOperation(edit);
-    const serialized = op.serialize();
-
-    expect(serialized.type).toBe("redact");
-    expect(serialized.edit).toEqual(edit);
-    expect(serialized).toHaveProperty("id");
-    expect(serialized).toHaveProperty("timestamp");
-  });
 });

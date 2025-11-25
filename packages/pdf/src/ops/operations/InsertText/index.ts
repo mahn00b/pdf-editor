@@ -7,7 +7,7 @@ export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
     super(edit);
   }
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const {
       page: pageIndex,
       value,
@@ -30,6 +30,6 @@ export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
       color: rgb(color.r, color.g, color.b),
     });
 
-    return pdfDoc;
+    return this;
   }
 }

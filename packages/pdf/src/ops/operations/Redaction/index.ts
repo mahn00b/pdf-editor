@@ -7,7 +7,7 @@ export class RedactionOperation extends BaseOperation<RedactionEdit> {
     super(edit);
   }
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<void> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPage(this.edit.page);
 
     const { rect } = this.edit;
@@ -22,5 +22,7 @@ export class RedactionOperation extends BaseOperation<RedactionEdit> {
       borderColor: rgb(0, 0, 0),
       borderWidth: 0,
     });
+
+    return this;
   }
 }
