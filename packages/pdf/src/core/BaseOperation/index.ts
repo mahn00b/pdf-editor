@@ -24,6 +24,24 @@ export abstract class BaseOperation<TEdit extends PdfEdit> {
       edit: this.edit,
     };
   }
+
+  /** Is edit scoped to page? */
+  public isPageLevel(): boolean {
+    return (
+      this.edit.type === 'insert-text' ||
+      this.edit.type === 'delete-text' ||
+      this.edit.type === 'replace-text' ||
+      this.edit.type === 'highlight' ||
+      this.edit.type === 'note' ||
+      this.edit.type === 'freeText' ||
+      this.edit.type === 'redact'
+    );
+  }
+
+  /** Is edit scoped to entire document? */
+  public isDocumentLevel(): boolean {
+    return !this.isPageLevel();
+  }
 }
 
 export default BaseOperation;
