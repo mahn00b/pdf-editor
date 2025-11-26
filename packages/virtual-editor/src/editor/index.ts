@@ -4,7 +4,8 @@ import type { PdfVersionDB } from "@pdf-editor/storage";
 import type {
   PersistMode,
   PdfEditorOptions,
-  Snapshot
+  Snapshot,
+  PageLevelSnapshot
 } from '@types'
 
 /**
@@ -186,8 +187,9 @@ export class PdfEditor {
     this.redoStack.push({ ...topSnapshot, data: currentBytes });
 
     if (topSnapshot.isPageLevel) {
-      const pageDoc = await PdfDoc.load(topSnapshot.data as Uint8Array);
-      await this.pdf.replacePage(topSnapshot.pageIndex, pageDoc);
+      const pageSnapshot = topSnapshot as PageLevelSnapshot;
+      const pageDoc = await PdfDoc.load(pageSnapshot.data);
+      await this.pdf.replacePage(pageSnapshot.pageIndex, pageDoc);
     } else {
       this.pdf = await PdfDoc.load(topSnapshot.data);
     }
