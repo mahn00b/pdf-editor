@@ -24,7 +24,6 @@ import { FreeTextOperation } from '../ops/operations/FreeText';
 import { RedactionOperation } from '../ops/operations/Redaction';
 import { findText } from '@query/queries/FindText';
 import BaseOperation from '@core/BaseOperation';
-import { T } from 'node_modules/vitest/dist/chunks/worker.d.DadbA89M';
 
 export class PdfDoc {
   private readonly pdf: PDFDocument;
