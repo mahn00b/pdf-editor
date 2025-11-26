@@ -220,19 +220,19 @@ export class PdfDoc {
   static toEditType<TClass extends BaseOperation<PdfEdit>>(edit: SerializableEdit<PdfEdit>): TClass {
     switch (edit.type) {
         case "insert-text":
-          return new InsertTextOperation(edit.edit as InsertTextEdit) as TClass;
+          return new InsertTextOperation(edit) as TClass;
         case "delete-text":
-          return new DeleteTextOperation(edit.edit as DeleteTextEdit) as TClass;
+          return new DeleteTextOperation(edit) as TClass;
         case "replace-text":
-          return new ReplaceTextOperation(edit.edit as ReplaceTextEdit) as TClass;
+          return new ReplaceTextOperation(edit) as TClass;
         case "highlight":
-          return new HighlightOperation(edit.edit as HighlightEdit) as TClass;
+          return new HighlightOperation(edit) as TClass;
         case "add-sticky-note":
-          return new AddStickyNoteOperation(edit.edit as AddStickyNoteEdit) as TClass;
+          return new AddStickyNoteOperation(edit) as TClass;
         case "free-text":
-          return new FreeTextOperation(edit.edit as FreeTextEdit) as TClass;
+          return new FreeTextOperation(edit) as TClass;
         case "redact":
-          return new RedactionOperation(edit.edit as RedactionEdit) as TClass;
+          return new RedactionOperation(edit) as TClass;
         default:
           throw new Error(`Unknown edit type: ${(edit as any).type}`);
       }
