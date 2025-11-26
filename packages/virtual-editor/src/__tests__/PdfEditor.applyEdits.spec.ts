@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { PdfEditor } from '../editor';
 import { createMockPdfDoc, createMockStorage, createMockEdit } from './setup';
 import type { PdfEditorOptions, Snapshot } from '@types';
