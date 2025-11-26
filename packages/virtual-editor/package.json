@@ -9,7 +9,6 @@
     "lint": "echo 'Add lint script here'"
   },
   "devDependencies": {
-    "@pdf-editor/pdf": "workspace:*",
     "@pdf-editor/eslint-config": "workspace:*",
     "@pdf-editor/typescript-config": "workspace:*",
     "@types/node": "^20.11.24",
