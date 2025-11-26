@@ -93,6 +93,28 @@ export class PdfEditor {
     }
   }
 
+  /**
+   * Internal helper to persist the current PDF state to the database.
+   * Handles both snapshot and delta persist modes.
+   */
+  private async persistVersion(
+    deltaEdits?: SerializableEdit<PdfEdit>[]
+  ): Promise<{ id: number; version: number }> {
+    const isSnapshot = this.persistMode === "snapshot";
+    const res = await this.storage.saveVersion(
+      this.documentId,
+      this.pdf,
+      isSnapshot,
+      isSnapshot ? undefined : deltaEdits
+    );
+    this.currentVersion = res.version;
+    const afterBytes = await this.pdf.save();
+    this.versionSnapshots.set(res.version, afterBytes);
+    this.draftEdits = [];
+    this.onDraftSaved?.(res);
+    return res;
+  }
+
   // -----------------------
   // Core: apply edits
   // -----------------------
@@ -128,21 +150,7 @@ export class PdfEditor {
 
     // persist automatically
     try {
-      if (this.persistMode === "snapshot") {
-        const res = await this.storage.saveVersion(this.documentId, this.pdf, true);
-        this.currentVersion = res.version;
-        const afterBytes = await this.pdf.save();
-        this.versionSnapshots.set(res.version, afterBytes);
-        this.draftEdits = [];
-        this.onDraftSaved?.(res);
-      } else {
-        const res = await this.storage.saveVersion(this.documentId, this.pdf, false, edits);
-        this.currentVersion = res.version;
-        const afterBytes = await this.pdf.save();
-        this.versionSnapshots.set(res.version, afterBytes);
-        this.draftEdits = [];
-        this.onDraftSaved?.(res);
-      }
+      await this.persistVersion(edits);
     } catch (err) {
       this.onDraftSaved?.(null);
       throw err;
@@ -153,23 +161,7 @@ export class PdfEditor {
     if (this.draftEdits.length === 0) return null;
 
     try {
-      if (this.persistMode === "snapshot") {
-        const res = await this.storage.saveVersion(this.documentId, this.pdf, true);
-        this.currentVersion = res.version;
-        const afterBytes = await this.pdf.save();
-        this.versionSnapshots.set(res.version, afterBytes);
-        this.draftEdits = [];
-        this.onDraftSaved?.(res);
-        return res;
-      } else {
-        const res = await this.storage.saveVersion(this.documentId, this.pdf, false, this.draftEdits);
-        this.currentVersion = res.version;
-        const afterBytes = await this.pdf.save();
-        this.versionSnapshots.set(res.version, afterBytes);
-        this.draftEdits = [];
-        this.onDraftSaved?.(res);
-        return res;
-      }
+      return await this.persistVersion(this.draftEdits);
     } catch (err) {
       this.onDraftSaved?.(null);
       throw err;
