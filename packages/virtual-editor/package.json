@@ -1,0 +1,27 @@
+{
+  "name": "@pdf-editor/virtual-editor",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "echo 'Add lint script here'"
+  },
+  "devDependencies": {
+    "@pdf-editor/pdf": "workspace:*",
+    "@pdf-editor/eslint-config": "workspace:*",
+    "@pdf-editor/typescript-config": "workspace:*",
+    "@types/node": "^20.11.24",
+    "fake-indexeddb": "^6.2.5",
+    "jsdom": "^27.2.0",
+    "pdf-lib": "^1.17.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
+  },
+  "dependencies": {
+    "@pdf-editor/pdf": "workspace:*",
+    "@pdf-editor/storage": "workspace:*"
+  }
+}
