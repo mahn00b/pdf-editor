@@ -33,7 +33,7 @@ vi.mock('@ops/operations/DeleteText', () => createMockOp('DeleteTextOperation'))
 vi.mock('@ops/operations/Highlight', () => createMockOp('HighlightOperation'));
 vi.mock('@ops/operations/InsertText', () => createMockOp('InsertTextOperation'));
 vi.mock('@ops/operations/ReplaceText', () => createMockOp('ReplaceTextOperation'));
-vi.mock('@ops/operations/StickyNote', () => createMockOp('StickyNoteOperation'));
+vi.mock('@ops/operations/StickyNote', () => createMockOp('AddStickyNoteOperation'));
 vi.mock('@ops/operations/FreeText', () => createMockOp('FreeTextOperation'));
 vi.mock('@ops/operations/Redaction', () => createMockOp('RedactionOperation'));
 
