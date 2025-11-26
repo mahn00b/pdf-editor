@@ -7,8 +7,10 @@ import { PDFDocument } from 'pdf-lib';
 class DummyInsertTextOperation extends BaseOperation<InsertTextEdit> {
   static operationType = 'insert-text';
 
+  constructor(arg: SerializableEdit<InsertTextEdit>);
+  constructor(arg: InsertTextEdit);
   constructor(arg: SerializableEdit<InsertTextEdit> | InsertTextEdit) {
-    super(arg as InsertTextEdit);
+    super(arg as SerializableEdit<InsertTextEdit>);
   }
 
   // noop for testing serialize
