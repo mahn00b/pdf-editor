@@ -181,14 +181,30 @@ export class PdfEditor {
   async undo(): Promise<void> {
     if (this.undoStack.length <= 1) return;
 
-    const currentBytes = await this.pdf.save();
     const topSnapshot = this.undoStack.pop()!;
-    this.redoStack.push({ ...topSnapshot, data: currentBytes });
 
     if (topSnapshot.isPageLevel) {
-      const pageDoc = await PdfDoc.load(topSnapshot.data as Uint8Array);
-      await this.pdf.replacePage(topSnapshot.pageIndex, pageDoc);
+      // Save current page state for redo (matching metadata with data)
+      const currentPageDoc = await this.pdf.extractPageAsPdf(topSnapshot.pageIndex);
+      const currentPageBytes = await currentPageDoc.save();
+      this.redoStack.push({
+        isPageLevel: true,
+        pageIndex: topSnapshot.pageIndex,
+        createdAt: Date.now(),
+        data: currentPageBytes
+      });
+      // Restore the page to previous state
+      const prevPageDoc = await PdfDoc.load(topSnapshot.data);
+      await this.pdf.replacePage(topSnapshot.pageIndex, prevPageDoc);
     } else {
+      // Save current full document for redo
+      const currentBytes = await this.pdf.save();
+      this.redoStack.push({
+        isPageLevel: false,
+        createdAt: Date.now(),
+        data: currentBytes
+      });
+      // Restore the full document
       this.pdf = await PdfDoc.load(topSnapshot.data);
     }
 
@@ -199,15 +215,30 @@ export class PdfEditor {
   async redo(): Promise<void> {
     if (this.redoStack.length === 0) return;
 
-    const currentBytes = await this.pdf.save();
     const snapshot = this.redoStack.pop()!;
-    this.undoStack.push({ ...snapshot, data: currentBytes });
 
     if (snapshot.isPageLevel) {
-      const pageSnapshot = snapshot as PageLevelSnapshot;
-      const pageDoc = await PdfDoc.load(pageSnapshot.data);
-      await this.pdf.replacePage(pageSnapshot.pageIndex, pageDoc);
+      // Save current page state for undo (matching metadata with data)
+      const currentPageDoc = await this.pdf.extractPageAsPdf(snapshot.pageIndex);
+      const currentPageBytes = await currentPageDoc.save();
+      this.undoStack.push({
+        isPageLevel: true,
+        pageIndex: snapshot.pageIndex,
+        createdAt: Date.now(),
+        data: currentPageBytes
+      });
+      // Apply the redo (restore page)
+      const redoPageDoc = await PdfDoc.load(snapshot.data);
+      await this.pdf.replacePage(snapshot.pageIndex, redoPageDoc);
     } else {
+      // Save current full document for undo
+      const currentBytes = await this.pdf.save();
+      this.undoStack.push({
+        isPageLevel: false,
+        createdAt: Date.now(),
+        data: currentBytes
+      });
+      // Restore the full document
       this.pdf = await PdfDoc.load(snapshot.data);
     }
 
