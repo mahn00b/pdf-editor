@@ -152,4 +152,60 @@ describe('PdfDoc', () => {
     expect(savedData).toEqual(newBytes);
     expect(doc.getRawData()).toEqual(newBytes);
   });
+
+  describe('toEditType', () => {
+    it('should return InsertTextOperation for insert-text edit type', () => {
+      const edit = { id: '1', type: 'insert-text', value: 'test', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(InsertTextOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return DeleteTextOperation for delete-text edit type', () => {
+      const edit = { id: '2', type: 'delete-text', oldValue: 'test', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(DeleteTextOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return ReplaceTextOperation for replace-text edit type', () => {
+      const edit = { id: '3', type: 'replace-text', oldValue: 'old', newValue: 'new', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(ReplaceTextOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return HighlightOperation for highlight edit type', () => {
+      const edit = { id: '4', type: 'highlight', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(HighlightOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return AddStickyNoteOperation for add-sticky-note edit type', () => {
+      const edit = { id: '5', type: 'add-sticky-note', contents: 'note', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(AddStickyNoteOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return FreeTextOperation for free-text edit type', () => {
+      const edit = { id: '6', type: 'free-text', value: 'text', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(FreeTextOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should return RedactionOperation for redact edit type', () => {
+      const edit = { id: '7', type: 'redact', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const result = PdfDoc.toEditType(edit);
+      expect(RedactionOperation).toHaveBeenCalledWith(edit);
+      expect(result).toBeDefined();
+    });
+
+    it('should throw an error for unknown edit type', () => {
+      const edit = { id: '8', type: 'unknown-type', pageIndex: 0 } as any;
+      expect(() => PdfDoc.toEditType(edit)).toThrow('Unknown edit type: unknown-type');
+    });
+  });
 });
