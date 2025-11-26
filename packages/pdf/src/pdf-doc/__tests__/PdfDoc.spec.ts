@@ -166,101 +166,79 @@ describe('PdfDoc', () => {
     expect(doc.getRawData()).toEqual(newBytes);
   });
 
-  describe('toEditType', () => {
-    it('should return InsertTextOperation for insert-text edit type', () => {
-      const edit: SerializableEdit<InsertTextEdit> = {
-        id: '1',
-        type: 'insert-text',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'insert-text', page: 0, value: 'test', position: { x: 0, y: 0 } }
+  describe('clone', () => {
+    it('should create a new PdfDoc instance with the same data and version', async () => {
+      const savedBytes = new Uint8Array([7, 8, 9]);
+      const mockPdfDoc = {
+        save: vi.fn().mockResolvedValue(savedBytes),
       };
-      const result = PdfDoc.toEditType(edit);
-      expect(InsertTextOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockPdfDoc as any);
 
-    it('should return DeleteTextOperation for delete-text edit type', () => {
-      const edit: SerializableEdit<DeleteTextEdit> = {
-        id: '2',
-        type: 'delete-text',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'delete-text', page: 0, oldValue: 'test', position: { x: 0, y: 0 } }
+      const doc = await PdfDoc.load(new Uint8Array([1, 2, 3]), 5);
+      const clonedDoc = await doc.clone();
+
+      expect(clonedDoc).toBeInstanceOf(PdfDoc);
+      expect(clonedDoc).not.toBe(doc);
+      expect(clonedDoc.getVersion()).toBe(5);
+      // load is called twice: once for original, once for clone
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('extractPageAsPdf', () => {
+    it('should extract a page and return a new PdfDoc', async () => {
+      const mockCopiedPage = { type: 'copiedPage' };
+      const extractedBytes = new Uint8Array([10, 11, 12]);
+      const mockNewPdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        addPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(extractedBytes),
       };
-      const result = PdfDoc.toEditType(edit);
-      expect(DeleteTextOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
-
-    it('should return ReplaceTextOperation for replace-text edit type', () => {
-      const edit: SerializableEdit<ReplaceTextEdit> = {
-        id: '3',
-        type: 'replace-text',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'replace-text', page: 0, oldValue: 'old', newValue: 'new', position: { x: 0, y: 0 } }
+      const mockSourcePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
       };
-      const result = PdfDoc.toEditType(edit);
-      expect(ReplaceTextOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
 
-    it('should return HighlightOperation for highlight edit type', () => {
-      const edit: SerializableEdit<HighlightEdit> = {
-        id: '4',
-        type: 'highlight',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'highlight', page: 0, rect: { x: 0, y: 0, width: 100, height: 20 } }
+      vi.spyOn(PDFDocument, 'create').mockResolvedValue(mockNewPdfDoc as any);
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockSourcePdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array());
+      const extractedDoc = await doc.extractPageAsPdf(2);
+
+      expect(PDFDocument.create).toHaveBeenCalled();
+      expect(mockNewPdfDoc.copyPages).toHaveBeenCalledWith(mockSourcePdfDoc, [2]);
+      expect(mockNewPdfDoc.addPage).toHaveBeenCalledWith(mockCopiedPage);
+      expect(mockNewPdfDoc.save).toHaveBeenCalled();
+      expect(extractedDoc).toBeInstanceOf(PdfDoc);
+      // load is called twice: once for source doc, once for extracted doc
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('replacePage', () => {
+    it('should replace a page at the specified index', async () => {
+      const mockCopiedPage = { type: 'newPage' };
+      const mockSourcePdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        removePage: vi.fn(),
+        insertPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(new Uint8Array([13, 14, 15])),
       };
-      const result = PdfDoc.toEditType(edit);
-      expect(HighlightOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
-
-    it('should return AddStickyNoteOperation for add-sticky-note edit type', () => {
-      const edit: SerializableEdit<AddStickyNoteEdit> = {
-        id: '5',
-        type: 'add-sticky-note',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'add-sticky-note', page: 0, text: 'note', position: { x: 0, y: 0 } }
+      const mockNewPagePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
       };
-      const result = PdfDoc.toEditType(edit);
-      expect(AddStickyNoteOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
 
-    it('should return FreeTextOperation for free-text edit type', () => {
-      const edit: SerializableEdit<FreeTextEdit> = {
-        id: '6',
-        type: 'free-text',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'free-text', page: 0, text: 'text', position: { x: 0, y: 0 } }
-      };
-      const result = PdfDoc.toEditType(edit);
-      expect(FreeTextOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
+      vi.spyOn(PDFDocument, 'load')
+        .mockResolvedValueOnce(mockSourcePdfDoc as any)
+        .mockResolvedValueOnce(mockNewPagePdfDoc as any);
 
-    it('should return RedactionOperation for redact edit type', () => {
-      const edit: SerializableEdit<RedactionEdit> = {
-        id: '7',
-        type: 'redact',
-        page: 0,
-        timestamp: Date.now(),
-        edit: { type: 'redact', page: 0, rect: { x: 0, y: 0, width: 100, height: 20 } }
-      };
-      const result = PdfDoc.toEditType(edit);
-      expect(RedactionOperation).toHaveBeenCalledWith(edit);
-      expect(result).toBeDefined();
-    });
+      const doc = await PdfDoc.load(new Uint8Array());
+      const newPageDoc = await PdfDoc.load(new Uint8Array());
+      await doc.replacePage(1, newPageDoc);
 
-    it('should throw an error for unknown edit type', () => {
-      const edit = { id: '8', type: 'unknown-type', page: 0, timestamp: Date.now(), edit: {} } as SerializableEdit<PdfEdit>;
-      expect(() => PdfDoc.toEditType(edit)).toThrow('Unknown edit type: unknown-type');
+      expect(mockSourcePdfDoc.copyPages).toHaveBeenCalledWith(mockNewPagePdfDoc, [0]);
+      expect(mockSourcePdfDoc.removePage).toHaveBeenCalledWith(1);
+      expect(mockSourcePdfDoc.insertPage).toHaveBeenCalledWith(1, mockCopiedPage);
+      expect(mockSourcePdfDoc.save).toHaveBeenCalled();
     });
   });
 });
