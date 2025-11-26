@@ -11,6 +11,18 @@ import { AddStickyNoteOperation } from '@ops/operations/StickyNote';
 import { FreeTextOperation } from '@ops/operations/FreeText';
 import { RedactionOperation } from '@ops/operations/Redaction';
 
+// Import types for proper type checking
+import type {
+  SerializableEdit,
+  InsertTextEdit,
+  DeleteTextEdit,
+  ReplaceTextEdit,
+  HighlightEdit,
+  AddStickyNoteEdit,
+  FreeTextEdit,
+  RedactionEdit
+} from '@types';
+
 // Shared spy for all operations, hoisted so it's available in mocks
 const { mockApplyEdit } = vi.hoisted(() => ({
   mockApplyEdit: vi.fn()
@@ -155,56 +167,98 @@ describe('PdfDoc', () => {
 
   describe('toEditType', () => {
     it('should return InsertTextOperation for insert-text edit type', () => {
-      const edit = { id: '1', type: 'insert-text', value: 'test', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<InsertTextEdit> = {
+        id: '1',
+        type: 'insert-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'insert-text', page: 0, value: 'test', position: { x: 0, y: 0 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(InsertTextOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return DeleteTextOperation for delete-text edit type', () => {
-      const edit = { id: '2', type: 'delete-text', oldValue: 'test', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<DeleteTextEdit> = {
+        id: '2',
+        type: 'delete-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'delete-text', page: 0, oldValue: 'test', position: { x: 0, y: 0 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(DeleteTextOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return ReplaceTextOperation for replace-text edit type', () => {
-      const edit = { id: '3', type: 'replace-text', oldValue: 'old', newValue: 'new', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<ReplaceTextEdit> = {
+        id: '3',
+        type: 'replace-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'replace-text', page: 0, oldValue: 'old', newValue: 'new', position: { x: 0, y: 0 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(ReplaceTextOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return HighlightOperation for highlight edit type', () => {
-      const edit = { id: '4', type: 'highlight', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<HighlightEdit> = {
+        id: '4',
+        type: 'highlight',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'highlight', page: 0, rect: { x: 0, y: 0, width: 100, height: 20 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(HighlightOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return AddStickyNoteOperation for add-sticky-note edit type', () => {
-      const edit = { id: '5', type: 'add-sticky-note', contents: 'note', position: { x: 0, y: 0 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<AddStickyNoteEdit> = {
+        id: '5',
+        type: 'add-sticky-note',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'add-sticky-note', page: 0, text: 'note', position: { x: 0, y: 0 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(AddStickyNoteOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return FreeTextOperation for free-text edit type', () => {
-      const edit = { id: '6', type: 'free-text', value: 'text', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<FreeTextEdit> = {
+        id: '6',
+        type: 'free-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'free-text', page: 0, text: 'text', position: { x: 0, y: 0 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(FreeTextOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should return RedactionOperation for redact edit type', () => {
-      const edit = { id: '7', type: 'redact', rect: { x: 0, y: 0, width: 100, height: 20 }, pageIndex: 0 } as any;
+      const edit: SerializableEdit<RedactionEdit> = {
+        id: '7',
+        type: 'redact',
+        page: 0,
+        timestamp: Date.now(),
+        edit: { type: 'redact', page: 0, rect: { x: 0, y: 0, width: 100, height: 20 } }
+      };
       const result = PdfDoc.toEditType(edit);
       expect(RedactionOperation).toHaveBeenCalledWith(edit);
       expect(result).toBeDefined();
     });
 
     it('should throw an error for unknown edit type', () => {
-      const edit = { id: '8', type: 'unknown-type', pageIndex: 0 } as any;
+      const edit = { id: '8', type: 'unknown-type', page: 0, timestamp: Date.now(), edit: {} } as SerializableEdit<InsertTextEdit>;
       expect(() => PdfDoc.toEditType(edit)).toThrow('Unknown edit type: unknown-type');
     });
   });
