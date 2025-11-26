@@ -60,7 +60,8 @@ describe("PdfEditor: applyEdits & undo/redo snapshots", () => {
     expect(storage.saveVersion).toHaveBeenCalledWith(
       editor['documentId'],
       editor.getPdf(),
-      true
+      true,
+      undefined
     );
   });
 
