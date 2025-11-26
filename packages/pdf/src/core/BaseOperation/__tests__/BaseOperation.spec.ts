@@ -16,6 +16,12 @@ import { PDFDocument } from 'pdf-lib';
 class DummyInsertTextOperation extends BaseOperation<InsertTextEdit> {
   static operationType = 'insert-text';
 
+  constructor(arg: SerializableEdit<InsertTextEdit>);
+  constructor(arg: InsertTextEdit);
+  constructor(arg: SerializableEdit<InsertTextEdit> | InsertTextEdit) {
+    super(arg as SerializableEdit<InsertTextEdit>);
+  }
+
   // noop for testing serialize
   async applyEdit(pdfDoc: PDFDocument) {
     return this;
@@ -161,5 +167,26 @@ describe('BaseOperation', () => {
       const op = new TestOperation(highlightEdit);
       expect(op.isDocumentLevel()).toBe(!op.isPageLevel());
     });
+  it('preserves id and timestamp when constructed with SerializableEdit', () => {
+    const edit: InsertTextEdit = {
+      type: 'insert-text',
+      page: 0,
+      value: 'test',
+      position: { x: 0, y: 0 },
+    };
+
+    const serialized: SerializableEdit<InsertTextEdit> = {
+      id: 'existing-id-123',
+      type: 'insert-text',
+      page: 0,
+      timestamp: 1700000000000,
+      edit,
+    };
+
+    const op = new DummyInsertTextOperation(serialized);
+
+    expect(op.id).toBe('existing-id-123');
+    expect(op.timestamp).toBe(1700000000000);
+    expect(op.edit).toEqual(edit);
   });
 });

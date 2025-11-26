@@ -24,7 +24,7 @@ export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
       ],
       Name: icon,
       T: author ?? undefined,
-      Open: open,,
+      Open: open,
     }
 
 
