@@ -14,6 +14,7 @@ import { RedactionOperation } from '@ops/operations/Redaction';
 // Import types for proper type checking
 import type {
   SerializableEdit,
+  PdfEdit,
   InsertTextEdit,
   DeleteTextEdit,
   ReplaceTextEdit,
@@ -258,7 +259,7 @@ describe('PdfDoc', () => {
     });
 
     it('should throw an error for unknown edit type', () => {
-      const edit = { id: '8', type: 'unknown-type', page: 0, timestamp: Date.now(), edit: {} } as SerializableEdit<InsertTextEdit>;
+      const edit = { id: '8', type: 'unknown-type', page: 0, timestamp: Date.now(), edit: {} } as SerializableEdit<PdfEdit>;
       expect(() => PdfDoc.toEditType(edit)).toThrow('Unknown edit type: unknown-type');
     });
   });
