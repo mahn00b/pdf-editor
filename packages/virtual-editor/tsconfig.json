@@ -8,6 +8,6 @@
         "@types": ["src/types/index.ts"]
       }
     },
-    "includes": ["src", "typings"],
+    "include": ["src", "typings"],
     "exclude": ["node_modules", "dist", "scripts"]
   }
