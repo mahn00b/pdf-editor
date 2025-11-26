@@ -204,8 +204,9 @@ export class PdfEditor {
     this.undoStack.push({ ...snapshot, data: currentBytes });
 
     if (snapshot.isPageLevel) {
-      const pageDoc = await PdfDoc.load(snapshot.data);
-      await this.pdf.replacePage(snapshot.pageIndex, pageDoc);
+      const pageSnapshot = snapshot as PageLevelSnapshot;
+      const pageDoc = await PdfDoc.load(pageSnapshot.data);
+      await this.pdf.replacePage(pageSnapshot.pageIndex, pageDoc);
     } else {
       this.pdf = await PdfDoc.load(snapshot.data);
     }
