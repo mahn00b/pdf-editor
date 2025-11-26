@@ -137,7 +137,6 @@ describe("PdfEditor.restoreVersion", () => {
 
 describe("PdfEditor.restoreLatest", () => {
   it("restores the latest version and pushes a document-level snapshot", async () => {
-    const latestVersion = 3;
 
     const beforeUndo = (editor as any).undoStack.length;
     await editor.restoreLatest();
