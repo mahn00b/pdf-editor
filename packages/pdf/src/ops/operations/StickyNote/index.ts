@@ -3,7 +3,7 @@ import { BaseOperation } from '../../../core/BaseOperation';
 import type { AddStickyNoteEdit } from '@types';
 
 export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
-  constructor(public readonly edit: AddStickyNoteEdit) {
+  constructor(edit: AddStickyNoteEdit) {
     super(edit);
   }
 
