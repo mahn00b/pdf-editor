@@ -11,6 +11,19 @@ import { AddStickyNoteOperation } from '@ops/operations/StickyNote';
 import { FreeTextOperation } from '@ops/operations/FreeText';
 import { RedactionOperation } from '@ops/operations/Redaction';
 
+// Import types for proper type checking
+import type {
+  SerializableEdit,
+  PdfEdit,
+  InsertTextEdit,
+  DeleteTextEdit,
+  ReplaceTextEdit,
+  HighlightEdit,
+  AddStickyNoteEdit,
+  FreeTextEdit,
+  RedactionEdit
+} from '@types';
+
 // Shared spy for all operations, hoisted so it's available in mocks
 const { mockApplyEdit } = vi.hoisted(() => ({
   mockApplyEdit: vi.fn()
