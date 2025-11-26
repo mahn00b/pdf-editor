@@ -12,7 +12,6 @@ describe("PdfEditor: applyEdits & undo/redo snapshots", () => {
   beforeEach(async () => {
     storage = createMockStorage();
     options = { storage };
-    const pdfDoc = createMockPdfDoc();
     editor = await PdfEditor.create("doc-1", { ...options });
   });
 
