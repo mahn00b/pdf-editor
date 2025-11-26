@@ -152,4 +152,80 @@ describe('PdfDoc', () => {
     expect(savedData).toEqual(newBytes);
     expect(doc.getRawData()).toEqual(newBytes);
   });
+
+  describe('clone', () => {
+    it('should create a new PdfDoc instance with the same data and version', async () => {
+      const savedBytes = new Uint8Array([7, 8, 9]);
+      const mockPdfDoc = {
+        save: vi.fn().mockResolvedValue(savedBytes),
+      };
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockPdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array([1, 2, 3]), 5);
+      const clonedDoc = await doc.clone();
+
+      expect(clonedDoc).toBeInstanceOf(PdfDoc);
+      expect(clonedDoc).not.toBe(doc);
+      expect(clonedDoc.getVersion()).toBe(5);
+      // load is called twice: once for original, once for clone
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('extractPageAsPdf', () => {
+    it('should extract a page and return a new PdfDoc', async () => {
+      const mockCopiedPage = { type: 'copiedPage' };
+      const extractedBytes = new Uint8Array([10, 11, 12]);
+      const mockNewPdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        addPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(extractedBytes),
+      };
+      const mockSourcePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
+      };
+
+      vi.spyOn(PDFDocument, 'create').mockResolvedValue(mockNewPdfDoc as any);
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockSourcePdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array());
+      const extractedDoc = await doc.extractPageAsPdf(2);
+
+      expect(PDFDocument.create).toHaveBeenCalled();
+      expect(mockNewPdfDoc.copyPages).toHaveBeenCalledWith(mockSourcePdfDoc, [2]);
+      expect(mockNewPdfDoc.addPage).toHaveBeenCalledWith(mockCopiedPage);
+      expect(mockNewPdfDoc.save).toHaveBeenCalled();
+      expect(extractedDoc).toBeInstanceOf(PdfDoc);
+      // load is called twice: once for source doc, once for extracted doc
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('replacePage', () => {
+    it('should replace a page at the specified index', async () => {
+      const mockCopiedPage = { type: 'newPage' };
+      const mockSourcePdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        removePage: vi.fn(),
+        insertPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(new Uint8Array([13, 14, 15])),
+      };
+      const mockNewPagePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
+      };
+
+      vi.spyOn(PDFDocument, 'load')
+        .mockResolvedValueOnce(mockSourcePdfDoc as any)
+        .mockResolvedValueOnce(mockNewPagePdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array());
+      const newPageDoc = await PdfDoc.load(new Uint8Array());
+      await doc.replacePage(1, newPageDoc);
+
+      expect(mockSourcePdfDoc.copyPages).toHaveBeenCalledWith(mockNewPagePdfDoc, [0]);
+      expect(mockSourcePdfDoc.removePage).toHaveBeenCalledWith(1);
+      expect(mockSourcePdfDoc.insertPage).toHaveBeenCalledWith(1, mockCopiedPage);
+      expect(mockSourcePdfDoc.save).toHaveBeenCalled();
+    });
+  });
 });
