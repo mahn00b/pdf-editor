@@ -1,1 +1,1 @@
-# `@pdf-editor/storage`
+# `@pdf-editor/virtual-editor`
