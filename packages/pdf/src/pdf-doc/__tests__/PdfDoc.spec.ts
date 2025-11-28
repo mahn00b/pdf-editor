@@ -113,7 +113,7 @@ describe('PdfDoc', () => {
 
   it('should delegate stickyNote to StickyNoteOperation', async () => {
     const doc = await PdfDoc.load(new Uint8Array());
-    const edit = { id: '5', type: 'sticky-note' } as any;
+    const edit = { id: '5', type: 'add-sticky-note' } as any;
 
     await doc.addStickyNote(edit);
 
