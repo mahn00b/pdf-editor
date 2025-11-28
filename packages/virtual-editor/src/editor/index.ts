@@ -270,13 +270,11 @@ export class PdfEditor {
   // -----------------------
   // Reset draft
   // -----------------------
-  resetDraft(): void {
+  async resetDraft(): Promise<void> {
     this.draftEdits = [];
     this.undoStack = [];
     this.redoStack = [];
-    void (async () => {
-      const bytes = await this.pdf.save();
-      this.undoStack.push({ isPageLevel: false, createdAt: Date.now(), data: bytes });
-    })();
+    const bytes = await this.pdf.save();
+    this.undoStack.push({ isPageLevel: false, createdAt: Date.now(), data: bytes });
   }
 }
