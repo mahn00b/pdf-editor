@@ -2,6 +2,21 @@
   "name": "@pdf-editor/virtual-editor",
   "version": "0.0.0",
   "private": true,
+  "main": "./dist/editor/index.js",
+  "module": "./dist/editor/index.mjs",
+  "types": "./dist/editor/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor/index.mjs",
+      "require": "./dist/editor/index.js"
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.mjs",
+      "require": "./dist/types/index.js"
+    }
+  },
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
