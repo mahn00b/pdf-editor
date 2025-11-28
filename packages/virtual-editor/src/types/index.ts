@@ -37,7 +37,7 @@ export interface PageLevelSnapshot extends BaseSnapshot {
 export type Snapshot = DocumentLevelSnapshot | PageLevelSnapshot;
 
 /**
- * Options for the editor, mostly same as before.
+ * Configuration options for the PDF editor.
  */
 export interface PdfEditorOptions {
   storage: PdfVersionDB;
