@@ -176,6 +176,43 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
+  packages/virtual-editor:
+    dependencies:
+      '@pdf-editor/pdf':
+        specifier: workspace:*
+        version: link:../pdf
+      '@pdf-editor/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      '@pdf-editor/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@pdf-editor/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^20.11.24
+        version: 20.19.24
+      fake-indexeddb:
+        specifier: ^6.2.5
+        version: 6.2.5
+      jsdom:
+        specifier: ^27.2.0
+        version: 27.2.0
+      pdf-lib:
+        specifier: ^1.17.1
+        version: 1.17.1
+      tsup:
+        specifier: ^8.5.1
+        version: 8.5.1(jiti@1.21.7)(postcss@8.5.6)(typescript@5.9.3)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.8
+        version: 4.0.8(@types/node@20.19.24)(jiti@1.21.7)(jsdom@27.2.0)
+
 packages:
 
   '@acemir/cssom@0.9.23':
