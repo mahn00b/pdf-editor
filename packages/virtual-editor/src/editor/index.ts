@@ -178,6 +178,16 @@ export class PdfEditor {
 
     if (topSnapshot.isPageLevel) {
       const pageSnapshot = topSnapshot as PageLevelSnapshot;
+      // Save current page for redo
+      const currentPageDoc = await this.pdf.extractPageAsPdf(pageSnapshot.pageIndex);
+      const currentPageBytes = await currentPageDoc.save();
+      this.redoStack.push({
+        isPageLevel: true,
+        pageIndex: pageSnapshot.pageIndex,
+        createdAt: Date.now(),
+        data: currentPageBytes
+      });
+      // Restore the page
       const pageDoc = await PdfDoc.load(pageSnapshot.data);
       await this.pdf.replacePage(pageSnapshot.pageIndex, pageDoc);
     } else {
