@@ -3,8 +3,10 @@ import { BaseOperation } from '../../../core/BaseOperation';
 import type { AddStickyNoteEdit } from '@types';
 
 export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
-  constructor(edit: AddStickyNoteEdit) {
-    super(edit);
+  constructor(serialized: SerializableEdit<AddStickyNoteEdit>);
+  constructor(edit: AddStickyNoteEdit);
+  constructor(arg: SerializableEdit<AddStickyNoteEdit> | AddStickyNoteEdit) {
+    super(arg);
   }
 
   async applyEdit(pdfDoc: PDFDocument): Promise<this> {
