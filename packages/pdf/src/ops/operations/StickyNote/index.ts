@@ -1,12 +1,12 @@
 import { PDFDocument, PDFPage, PDFArray, PDFName, PDFString } from 'pdf-lib';
 import { BaseOperation } from '../../../core/BaseOperation';
-import type { AddStickyNoteEdit } from '@types';
+import type { AddStickyNoteEdit, SerializableEdit } from '@types';
 
 export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
   constructor(serialized: SerializableEdit<AddStickyNoteEdit>);
   constructor(edit: AddStickyNoteEdit);
   constructor(arg: SerializableEdit<AddStickyNoteEdit> | AddStickyNoteEdit) {
-    super(arg);
+    super(arg as any);
   }
 
   async applyEdit(pdfDoc: PDFDocument): Promise<this> {
