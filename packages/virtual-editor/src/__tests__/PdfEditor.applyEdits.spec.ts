@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { PdfEditor } from '../editor';
-import { createMockPdfDoc, createMockStorage, createMockEdit } from './setup';
+import { createMockStorage, createMockEdit } from './setup';
 import type { PdfEditorOptions, Snapshot } from '@types';
 import type { PdfEdit, SerializableEdit } from '@pdf-editor/pdf';
 
