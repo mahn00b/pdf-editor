@@ -9,6 +9,7 @@ import type {
   FreeTextEdit,
   RedactionEdit,
   PdfEdit,
+  SerializableEdit,
 } from '@types';
 import { PDFDocument } from 'pdf-lib';
 
