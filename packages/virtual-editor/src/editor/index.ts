@@ -202,18 +202,19 @@ export class PdfEditor {
     const snapshot = this.redoStack.pop()!;
 
     if (snapshot.isPageLevel) {
+      const pageSnapshot = snapshot as PageLevelSnapshot;
       // Save current page state for undo (matching metadata with data)
-      const currentPageDoc = await this.pdf.extractPageAsPdf(snapshot.pageIndex);
+      const currentPageDoc = await this.pdf.extractPageAsPdf(pageSnapshot.pageIndex);
       const currentPageBytes = await currentPageDoc.save();
       this.undoStack.push({
         isPageLevel: true,
-        pageIndex: snapshot.pageIndex,
+        pageIndex: pageSnapshot.pageIndex,
         createdAt: Date.now(),
         data: currentPageBytes
       });
       // Apply the redo (restore page)
-      const redoPageDoc = await PdfDoc.load(snapshot.data);
-      await this.pdf.replacePage(snapshot.pageIndex, redoPageDoc);
+      const redoPageDoc = await PdfDoc.load(pageSnapshot.data);
+      await this.pdf.replacePage(pageSnapshot.pageIndex, redoPageDoc);
     } else {
       // Save current full document for undo
       const currentBytes = await this.pdf.save();
