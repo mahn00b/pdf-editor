@@ -122,7 +122,7 @@ export class PdfEditor {
     if (!edits || edits.length === 0) return;
 
     for (const edit of edits) {
-      const isPageLevel = PdfDoc.toEditType(edit).isPageLevel();
+      const isPageLevel = PdfDoc.isPageLevelEdit(edit);
 
       if (isPageLevel) {
         // snapshot only this page

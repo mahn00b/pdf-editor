@@ -219,21 +219,40 @@ export class PdfDoc {
   static toEditType<TClass extends BaseOperation<PdfEdit>>(edit: SerializableEdit<PdfEdit>): TClass {
     switch (edit.type) {
         case "insert-text":
-          return new InsertTextOperation(edit) as TClass;
+          return new InsertTextOperation(edit as SerializableEdit<InsertTextEdit>) as TClass;
         case "delete-text":
-          return new DeleteTextOperation(edit) as TClass;
+          return new DeleteTextOperation(edit as SerializableEdit<DeleteTextEdit>) as TClass;
         case "replace-text":
-          return new ReplaceTextOperation(edit) as TClass;
+          return new ReplaceTextOperation(edit as SerializableEdit<ReplaceTextEdit>) as TClass;
         case "highlight":
-          return new HighlightOperation(edit) as TClass;
+          return new HighlightOperation(edit as SerializableEdit<HighlightEdit>) as TClass;
         case "add-sticky-note":
-          return new AddStickyNoteOperation(edit) as TClass;
+          return new AddStickyNoteOperation(edit as SerializableEdit<AddStickyNoteEdit>) as TClass;
         case "free-text":
-          return new FreeTextOperation(edit) as TClass;
+          return new FreeTextOperation(edit as SerializableEdit<FreeTextEdit>) as TClass;
         case "redact":
-          return new RedactionOperation(edit) as TClass;
+          return new RedactionOperation(edit as SerializableEdit<RedactionEdit>) as TClass;
         default:
-          throw new Error(`Unknown edit type: ${(edit as any).type}`);
+          throw new Error(`Unknown edit type: ${(edit as SerializableEdit<PdfEdit>).type}`);
       }
+  }
+
+  /**
+   * Static helper to check if an edit type is page-level without instantiating an operation.
+   * Page-level edits are scoped to a single page.
+   *
+   * @param edit - The serializable edit to check
+   * @returns true if the edit is page-level, false otherwise
+   */
+  static isPageLevelEdit(edit: SerializableEdit<PdfEdit>): boolean {
+    return (
+      edit.type === 'insert-text' ||
+      edit.type === 'delete-text' ||
+      edit.type === 'replace-text' ||
+      edit.type === 'highlight' ||
+      edit.type === 'add-sticky-note' ||
+      edit.type === 'free-text' ||
+      edit.type === 'redact'
+    );
   }
 }

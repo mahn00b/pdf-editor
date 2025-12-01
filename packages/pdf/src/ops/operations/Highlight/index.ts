@@ -1,10 +1,16 @@
 import { PDFDocument, PDFPage, rgb } from 'pdf-lib';
 import { BaseOperation } from '../../../core/BaseOperation';
-import type { HighlightEdit } from '@types';
+import type { HighlightEdit, SerializableEdit } from '@types';
 
 export class HighlightOperation extends BaseOperation<HighlightEdit> {
-  constructor(edit: HighlightEdit) {
-    super(edit);
+  constructor(serialized: SerializableEdit<HighlightEdit>);
+  constructor(edit: HighlightEdit);
+  constructor(arg: SerializableEdit<HighlightEdit> | HighlightEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<HighlightEdit>);
+    } else {
+      super(arg as HighlightEdit);
+    }
   }
 
   async applyEdit(pdfDoc: PDFDocument): Promise<this> {

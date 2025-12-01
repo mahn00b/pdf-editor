@@ -241,4 +241,131 @@ describe('PdfDoc', () => {
       expect(mockSourcePdfDoc.save).toHaveBeenCalled();
     });
   });
+
+  describe('isPageLevelEdit', () => {
+    it('should return true for insert-text edit', () => {
+      const edit: SerializableEdit<InsertTextEdit> = {
+        id: 'test-id',
+        type: 'insert-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'insert-text',
+          page: 0,
+          value: 'test',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for delete-text edit', () => {
+      const edit: SerializableEdit<DeleteTextEdit> = {
+        id: 'test-id',
+        type: 'delete-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'delete-text',
+          page: 0,
+          oldValue: 'deleted text',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for replace-text edit', () => {
+      const edit: SerializableEdit<ReplaceTextEdit> = {
+        id: 'test-id',
+        type: 'replace-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'replace-text',
+          page: 0,
+          oldValue: 'old',
+          newValue: 'new',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for highlight edit', () => {
+      const edit: SerializableEdit<HighlightEdit> = {
+        id: 'test-id',
+        type: 'highlight',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'highlight',
+          page: 0,
+          rect: { x: 0, y: 0, width: 100, height: 20 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for add-sticky-note edit', () => {
+      const edit: SerializableEdit<AddStickyNoteEdit> = {
+        id: 'test-id',
+        type: 'add-sticky-note',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'add-sticky-note',
+          page: 0,
+          position: { x: 0, y: 0 },
+          text: 'note text',
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for free-text edit', () => {
+      const edit: SerializableEdit<FreeTextEdit> = {
+        id: 'test-id',
+        type: 'free-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'free-text',
+          page: 0,
+          text: 'free text',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for redact edit', () => {
+      const edit: SerializableEdit<RedactionEdit> = {
+        id: 'test-id',
+        type: 'redact',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'redact',
+          page: 0,
+          rect: { x: 0, y: 0, width: 100, height: 20 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return false for unknown edit type', () => {
+      const edit: SerializableEdit<PdfEdit> = {
+        id: 'test-id',
+        type: 'unknown-type',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'unknown-type',
+          page: 0,
+        } as PdfEdit,
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(false);
+    });
+  });
 });
