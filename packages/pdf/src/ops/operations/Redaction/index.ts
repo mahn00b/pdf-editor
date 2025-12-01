@@ -1,10 +1,16 @@
 import { PDFDocument, rgb } from "pdf-lib";
-import { RedactionEdit } from "@types";
+import { RedactionEdit, SerializableEdit } from "@types";
 import { BaseOperation } from "../../../core/BaseOperation";
 
 export class RedactionOperation extends BaseOperation<RedactionEdit> {
-  constructor(edit: RedactionEdit) {
-    super(edit);
+  constructor(serialized: SerializableEdit<RedactionEdit>);
+  constructor(edit: RedactionEdit);
+  constructor(arg: SerializableEdit<RedactionEdit> | RedactionEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<RedactionEdit>);
+    } else {
+      super(arg as RedactionEdit);
+    }
   }
 
   async applyEdit(pdfDoc: PDFDocument): Promise<this> {
