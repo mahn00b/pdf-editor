@@ -21,7 +21,7 @@
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "echo 'Add lint script here'"
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "devDependencies": {
     "@pdf-editor/eslint-config": "workspace:*",
