@@ -1,11 +1,21 @@
 import { BaseOperation } from '../../../core/BaseOperation';
 import { PDFDocument, rgb } from 'pdf-lib';
-import type { DeleteTextEdit } from '@types';
+import type { DeleteTextEdit, SerializableEdit } from '@types';
 
 export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
   static operationType = 'delete-text';
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  constructor(serialized: SerializableEdit<DeleteTextEdit>);
+  constructor(edit: DeleteTextEdit);
+  constructor(arg: SerializableEdit<DeleteTextEdit> | DeleteTextEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<DeleteTextEdit>);
+    } else {
+      super(arg as DeleteTextEdit);
+    }
+  }
+
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const { page: pageIndex, position, font } = this.edit;
     const page = pdfDoc.getPage(pageIndex);
 
@@ -21,6 +31,6 @@ export class DeleteTextOperation extends BaseOperation<DeleteTextEdit> {
       color: rgb(1, 1, 1),
     });
 
-    return pdfDoc;
+    return this;
   }
 }

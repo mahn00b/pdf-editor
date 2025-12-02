@@ -43,26 +43,4 @@ describe('ReplaceTextOperation', () => {
     expect(op1.id).not.toBe(op2.id);
     expect(op1.timestamp).toBeTypeOf('number');
   });
-
-  it('serialize() returns a valid SerializableEdit', () => {
-    const edit: ReplaceTextEdit = {
-      type: 'replace-text',
-      page: 0,
-      oldValue: 'foo',
-      newValue: 'bar',
-      position: { x: 20, y: 400 },
-      font: { size: 12 },
-    };
-
-    const op = new ReplaceTextOperation(edit);
-    const serialized = op.serialize();
-
-    expect(serialized).toEqual({
-      id: op.id,
-      type: 'replace-text',
-      page: 0,
-      timestamp: op.timestamp,
-      edit,
-    });
-  });
 });

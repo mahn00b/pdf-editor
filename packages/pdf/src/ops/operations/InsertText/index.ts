@@ -1,13 +1,19 @@
-import type { InsertTextEdit } from '@types';
+import type { InsertTextEdit, SerializableEdit } from '@types';
 import BaseOperation from '../../../core/BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
 
 export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
-  constructor(public edit: InsertTextEdit) {
-    super(edit);
+  constructor(serialized: SerializableEdit<InsertTextEdit>);
+  constructor(edit: InsertTextEdit);
+  constructor(arg: SerializableEdit<InsertTextEdit> | InsertTextEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<InsertTextEdit>);
+    } else {
+      super(arg as InsertTextEdit);
+    }
   }
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const {
       page: pageIndex,
       value,
@@ -30,6 +36,6 @@ export class InsertTextOperation extends BaseOperation<InsertTextEdit> {
       color: rgb(color.r, color.g, color.b),
     });
 
-    return pdfDoc;
+    return this;
   }
 }

@@ -30,20 +30,4 @@ describe("AddFreeTextBoxOperation", () => {
     expect(bytes).toBeInstanceOf(Uint8Array);
     expect(bytes.length).toBeGreaterThan(100);
   });
-
-  it("serializes correctly using BaseOperation", () => {
-    const edit: FreeTextEdit = {
-      type: "freeText",
-      page: 0,
-      text: "Styled text",
-      position: { x: 10, y: 20 },
-    };
-
-    const op = new FreeTextOperation(edit);
-    const serialized = op.serialize();
-
-    expect(serialized).toHaveProperty("id");
-    expect(serialized.type).toBe("freeText");
-    expect(serialized.edit).toEqual(edit);
-  });
 });

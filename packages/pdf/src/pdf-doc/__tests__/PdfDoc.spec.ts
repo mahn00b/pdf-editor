@@ -7,78 +7,48 @@ import { DeleteTextOperation } from '@ops/operations/DeleteText';
 import { HighlightOperation } from '@ops/operations/Highlight';
 import { InsertTextOperation } from '@ops/operations/InsertText';
 import { ReplaceTextOperation } from '@ops/operations/ReplaceText';
-import { StickyNoteOperation } from '@ops/operations/StickyNote';
+import { AddStickyNoteOperation } from '@ops/operations/StickyNote';
 import { FreeTextOperation } from '@ops/operations/FreeText';
 import { RedactionOperation } from '@ops/operations/Redaction';
 
+// Import types for proper type checking
+import type {
+  SerializableEdit,
+  PdfEdit,
+  InsertTextEdit,
+  DeleteTextEdit,
+  ReplaceTextEdit,
+  HighlightEdit,
+  AddStickyNoteEdit,
+  FreeTextEdit,
+  RedactionEdit
+} from '@types';
+
 // Shared spy for all operations, hoisted so it's available in mocks
 const { mockApplyEdit } = vi.hoisted(() => ({
-  mockApplyEdit: vi.fn().mockResolvedValue(undefined)
+  mockApplyEdit: vi.fn()
 }));
 
-// Define mocks explicitly to avoid hoisting issues with loops
-vi.mock('@ops/operations/DeleteText', () => {
+function createMockOp(name: string) {
   const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
     this.edit = edit;
-    this.applyEdit = mockApplyEdit;
+    this.applyEdit = vi.fn().mockImplementation(async () => {
+      await mockApplyEdit();
+      return this;
+    });
+    this.serialize = vi.fn().mockReturnValue({ ...edit, id: 'mock-id' });
   });
   (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { DeleteTextOperation: MockOp };
-});
+  return { [name]: MockOp };
+}
 
-vi.mock('@ops/operations/Highlight', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { HighlightOperation: MockOp };
-});
-
-vi.mock('@ops/operations/InsertText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { InsertTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/ReplaceText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { ReplaceTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/StickyNote', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { StickyNoteOperation: MockOp };
-});
-
-vi.mock('@ops/operations/FreeText', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { FreeTextOperation: MockOp };
-});
-
-vi.mock('@ops/operations/Redaction', () => {
-  const MockOp = vi.fn().mockImplementation(function(this: any, edit: any) {
-    this.edit = edit;
-    this.applyEdit = mockApplyEdit;
-  });
-  (MockOp as any).mockApplyEdit = mockApplyEdit;
-  return { RedactionOperation: MockOp };
-});
+vi.mock('@ops/operations/DeleteText', () => createMockOp('DeleteTextOperation'));
+vi.mock('@ops/operations/Highlight', () => createMockOp('HighlightOperation'));
+vi.mock('@ops/operations/InsertText', () => createMockOp('InsertTextOperation'));
+vi.mock('@ops/operations/ReplaceText', () => createMockOp('ReplaceTextOperation'));
+vi.mock('@ops/operations/StickyNote', () => createMockOp('AddStickyNoteOperation'));
+vi.mock('@ops/operations/FreeText', () => createMockOp('FreeTextOperation'));
+vi.mock('@ops/operations/Redaction', () => createMockOp('RedactionOperation'));
 
 vi.mock('@query/queries/FindText', () => ({
   findText: vi.fn().mockResolvedValue([{ page: 0, text: 'Hello World', position: { x: 100, y: 200 } }]),
@@ -143,12 +113,12 @@ describe('PdfDoc', () => {
 
   it('should delegate stickyNote to StickyNoteOperation', async () => {
     const doc = await PdfDoc.load(new Uint8Array());
-    const edit = { id: '5', type: 'sticky-note' } as any;
+    const edit = { id: '5', type: 'add-sticky-note' } as any;
 
-    await doc.stickyNote(edit);
+    await doc.addStickyNote(edit);
 
-    expect(StickyNoteOperation).toHaveBeenCalledWith(edit);
-    expect((StickyNoteOperation as any).mockApplyEdit).toHaveBeenCalled();
+    expect(AddStickyNoteOperation).toHaveBeenCalledWith(edit);
+    expect((AddStickyNoteOperation as any).mockApplyEdit).toHaveBeenCalled();
   });
 
   it('should delegate freeText to FreeTextOperation', async () => {
@@ -194,5 +164,208 @@ describe('PdfDoc', () => {
     expect(mockPdfDoc.save).toHaveBeenCalled();
     expect(savedData).toEqual(newBytes);
     expect(doc.getRawData()).toEqual(newBytes);
+  });
+
+  describe('clone', () => {
+    it('should create a new PdfDoc instance with the same data and version', async () => {
+      const savedBytes = new Uint8Array([7, 8, 9]);
+      const mockPdfDoc = {
+        save: vi.fn().mockResolvedValue(savedBytes),
+      };
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockPdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array([1, 2, 3]), 5);
+      const clonedDoc = await doc.clone();
+
+      expect(clonedDoc).toBeInstanceOf(PdfDoc);
+      expect(clonedDoc).not.toBe(doc);
+      expect(clonedDoc.getVersion()).toBe(5);
+      // load is called twice: once for original, once for clone
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('extractPageAsPdf', () => {
+    it('should extract a page and return a new PdfDoc', async () => {
+      const mockCopiedPage = { type: 'copiedPage' };
+      const extractedBytes = new Uint8Array([10, 11, 12]);
+      const mockNewPdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        addPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(extractedBytes),
+      };
+      const mockSourcePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
+      };
+
+      vi.spyOn(PDFDocument, 'create').mockResolvedValue(mockNewPdfDoc as any);
+      const loadSpy = vi.spyOn(PDFDocument, 'load').mockResolvedValue(mockSourcePdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array());
+      const extractedDoc = await doc.extractPageAsPdf(2);
+
+      expect(PDFDocument.create).toHaveBeenCalled();
+      expect(mockNewPdfDoc.copyPages).toHaveBeenCalledWith(mockSourcePdfDoc, [2]);
+      expect(mockNewPdfDoc.addPage).toHaveBeenCalledWith(mockCopiedPage);
+      expect(mockNewPdfDoc.save).toHaveBeenCalled();
+      expect(extractedDoc).toBeInstanceOf(PdfDoc);
+      // load is called twice: once for source doc, once for extracted doc
+      expect(loadSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('replacePage', () => {
+    it('should replace a page at the specified index', async () => {
+      const mockCopiedPage = { type: 'newPage' };
+      const mockSourcePdfDoc = {
+        copyPages: vi.fn().mockResolvedValue([mockCopiedPage]),
+        removePage: vi.fn(),
+        insertPage: vi.fn(),
+        save: vi.fn().mockResolvedValue(new Uint8Array([13, 14, 15])),
+      };
+      const mockNewPagePdfDoc = {
+        save: vi.fn().mockResolvedValue(new Uint8Array()),
+      };
+
+      vi.spyOn(PDFDocument, 'load')
+        .mockResolvedValueOnce(mockSourcePdfDoc as any)
+        .mockResolvedValueOnce(mockNewPagePdfDoc as any);
+
+      const doc = await PdfDoc.load(new Uint8Array());
+      const newPageDoc = await PdfDoc.load(new Uint8Array());
+      await doc.replacePage(1, newPageDoc);
+
+      expect(mockSourcePdfDoc.copyPages).toHaveBeenCalledWith(mockNewPagePdfDoc, [0]);
+      expect(mockSourcePdfDoc.removePage).toHaveBeenCalledWith(1);
+      expect(mockSourcePdfDoc.insertPage).toHaveBeenCalledWith(1, mockCopiedPage);
+      expect(mockSourcePdfDoc.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('isPageLevelEdit', () => {
+    it('should return true for insert-text edit', () => {
+      const edit: SerializableEdit<InsertTextEdit> = {
+        id: 'test-id',
+        type: 'insert-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'insert-text',
+          page: 0,
+          value: 'test',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for delete-text edit', () => {
+      const edit: SerializableEdit<DeleteTextEdit> = {
+        id: 'test-id',
+        type: 'delete-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'delete-text',
+          page: 0,
+          oldValue: 'deleted text',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for replace-text edit', () => {
+      const edit: SerializableEdit<ReplaceTextEdit> = {
+        id: 'test-id',
+        type: 'replace-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'replace-text',
+          page: 0,
+          oldValue: 'old',
+          newValue: 'new',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for highlight edit', () => {
+      const edit: SerializableEdit<HighlightEdit> = {
+        id: 'test-id',
+        type: 'highlight',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'highlight',
+          page: 0,
+          rect: { x: 0, y: 0, width: 100, height: 20 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for add-sticky-note edit', () => {
+      const edit: SerializableEdit<AddStickyNoteEdit> = {
+        id: 'test-id',
+        type: 'add-sticky-note',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'add-sticky-note',
+          page: 0,
+          position: { x: 0, y: 0 },
+          text: 'note text',
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for free-text edit', () => {
+      const edit: SerializableEdit<FreeTextEdit> = {
+        id: 'test-id',
+        type: 'free-text',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'free-text',
+          page: 0,
+          text: 'free text',
+          position: { x: 0, y: 0 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return true for redact edit', () => {
+      const edit: SerializableEdit<RedactionEdit> = {
+        id: 'test-id',
+        type: 'redact',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'redact',
+          page: 0,
+          rect: { x: 0, y: 0, width: 100, height: 20 },
+        },
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(true);
+    });
+
+    it('should return false for unknown edit type', () => {
+      const edit: SerializableEdit<PdfEdit> = {
+        id: 'test-id',
+        type: 'unknown-type',
+        page: 0,
+        timestamp: Date.now(),
+        edit: {
+          type: 'unknown-type',
+          page: 0,
+        } as PdfEdit,
+      };
+      expect(PdfDoc.isPageLevelEdit(edit)).toBe(false);
+    });
   });
 });

@@ -1,15 +1,15 @@
 {
-  "name": "@pdf-editor/storage",
+  "name": "@pdf-editor/virtual-editor",
   "version": "0.0.0",
   "private": true,
-  "main": "./dist/db/index.js",
-  "module": "./dist/db/index.mjs",
-  "types": "./dist/db/index.d.ts",
+  "main": "./dist/editor/index.js",
+  "module": "./dist/editor/index.mjs",
+  "types": "./dist/editor/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/db/index.d.ts",
-      "import": "./dist/db/index.mjs",
-      "require": "./dist/db/index.js"
+      "types": "./dist/editor/index.d.ts",
+      "import": "./dist/editor/index.mjs",
+      "require": "./dist/editor/index.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",
@@ -17,17 +17,13 @@
       "require": "./dist/types/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "echo 'Add lint script here'"
+    "lint": "eslint src --ext .ts,.tsx"
   },
   "devDependencies": {
-    "@pdf-editor/pdf": "workspace:*",
     "@pdf-editor/eslint-config": "workspace:*",
     "@pdf-editor/typescript-config": "workspace:*",
     "@types/node": "^20.11.24",
@@ -39,8 +35,7 @@
     "vitest": "^4.0.8"
   },
   "dependencies": {
-    "dexie": "^4.2.1",
-    "fflate": "^0.8.2",
-    "@pdf-editor/pdf": "workspace:*"
+    "@pdf-editor/pdf": "workspace:*",
+    "@pdf-editor/storage": "workspace:*"
   }
 }

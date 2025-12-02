@@ -1,13 +1,19 @@
 import { PDFDocument, rgb } from "pdf-lib";
-import { FreeTextEdit } from "@types";
+import { FreeTextEdit, SerializableEdit } from "@types";
 import { BaseOperation } from "../../../core/BaseOperation";
 
 export class FreeTextOperation extends BaseOperation<FreeTextEdit> {
-  constructor(edit: FreeTextEdit) {
-    super(edit);
+  constructor(serialized: SerializableEdit<FreeTextEdit>);
+  constructor(edit: FreeTextEdit);
+  constructor(arg: SerializableEdit<FreeTextEdit> | FreeTextEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<FreeTextEdit>);
+    } else {
+      super(arg as FreeTextEdit);
+    }
   }
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<void> {
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const page = pdfDoc.getPage(this.edit.page);
 
     const {
@@ -32,5 +38,7 @@ export class FreeTextOperation extends BaseOperation<FreeTextEdit> {
       color: rgbColor,
       lineHeight: font?.size ? font.size * 1.2 : 14,
     });
+
+    return this;
   }
 }

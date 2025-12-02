@@ -1,11 +1,21 @@
 import { BaseOperation } from '../../../core/BaseOperation';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import type { ReplaceTextEdit } from '@types';
+import type { ReplaceTextEdit, SerializableEdit } from '@types';
 
 export class ReplaceTextOperation extends BaseOperation<ReplaceTextEdit> {
   static operationType = 'replace-text';
 
-  async applyEdit(pdfDoc: PDFDocument): Promise<PDFDocument> {
+  constructor(serialized: SerializableEdit<ReplaceTextEdit>);
+  constructor(edit: ReplaceTextEdit);
+  constructor(arg: SerializableEdit<ReplaceTextEdit> | ReplaceTextEdit) {
+    if ('edit' in arg && 'id' in arg && 'timestamp' in arg) {
+      super(arg as SerializableEdit<ReplaceTextEdit>);
+    } else {
+      super(arg as ReplaceTextEdit);
+    }
+  }
+
+  async applyEdit(pdfDoc: PDFDocument): Promise<this> {
     const { page: pageIndex, newValue, position, font, color = { r: 0, g: 0, b: 0 } } = this.edit;
     const page = pdfDoc.getPage(pageIndex);
 
@@ -21,6 +31,6 @@ export class ReplaceTextOperation extends BaseOperation<ReplaceTextEdit> {
       color: rgb(color.r, color.g, color.b),
     });
 
-    return pdfDoc;
+    return this;
   }
 }

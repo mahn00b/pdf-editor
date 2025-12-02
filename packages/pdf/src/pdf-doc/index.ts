@@ -7,7 +7,7 @@ import {
   DeleteTextEdit,
   ReplaceTextEdit,
   HighlightEdit,
-  StickyNoteEdit,
+  AddStickyNoteEdit,
   FreeTextEdit,
   RedactionEdit,
   SerializableEdit,
@@ -19,10 +19,11 @@ import { InsertTextOperation } from '../ops/operations/InsertText';
 import { DeleteTextOperation } from '../ops/operations/DeleteText';
 import { ReplaceTextOperation } from '../ops/operations/ReplaceText';
 import { HighlightOperation } from '../ops/operations/Highlight';
-import { StickyNoteOperation } from '../ops/operations/StickyNote';
+import { AddStickyNoteOperation } from '../ops/operations/StickyNote';
 import { FreeTextOperation } from '../ops/operations/FreeText';
 import { RedactionOperation } from '../ops/operations/Redaction';
 import { findText } from '@query/queries/FindText';
+import BaseOperation from '@core/BaseOperation';
 
 export class PdfDoc {
   private readonly pdf: PDFDocument;
@@ -65,9 +66,8 @@ export class PdfDoc {
    * @param edit - The insert text edit configuration containing the text value, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async insertText(edit: InsertTextEdit) {
-    await new InsertTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async insertText(edit: InsertTextEdit): Promise<SerializableEdit<InsertTextEdit>> {
+    return (await new InsertTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -79,9 +79,8 @@ export class PdfDoc {
    * @param edit - The delete text edit configuration containing the oldValue (text being removed), position, and optional font settings
    * @returns The PdfDoc instance for method chaining
    */
-  async deleteText(edit: DeleteTextEdit) {
-    await new DeleteTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async deleteText(edit: DeleteTextEdit): Promise<SerializableEdit<DeleteTextEdit>> {
+    return (await new DeleteTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -93,9 +92,8 @@ export class PdfDoc {
    * @param edit - The replace text edit configuration containing oldValue, newValue, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async replaceText(edit: ReplaceTextEdit) {
-    await new ReplaceTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async replaceText(edit: ReplaceTextEdit): Promise<SerializableEdit<ReplaceTextEdit>> {
+    return (await new ReplaceTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -107,9 +105,8 @@ export class PdfDoc {
    * @param edit - The highlight edit configuration containing the rectangle dimensions and optional color
    * @returns The PdfDoc instance for method chaining
    */
-  async highlight(edit: HighlightEdit) {
-    await new HighlightOperation(edit).applyEdit(this.pdf);
-    return this;
+  async highlight(edit: HighlightEdit): Promise<SerializableEdit<HighlightEdit>> {
+    return (await new HighlightOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -121,9 +118,8 @@ export class PdfDoc {
    * @param edit - The sticky note edit configuration containing the text content and position
    * @returns The PdfDoc instance for method chaining
    */
-  async stickyNote(edit: StickyNoteEdit) {
-    await new StickyNoteOperation(edit).applyEdit(this.pdf);
-    return this;
+  async addStickyNote(edit: AddStickyNoteEdit): Promise<SerializableEdit<AddStickyNoteEdit>> {
+    return (await new AddStickyNoteOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -135,9 +131,8 @@ export class PdfDoc {
    * @param edit - The free text edit configuration containing the text, position, and optional font/color settings
    * @returns The PdfDoc instance for method chaining
    */
-  async freeText(edit: FreeTextEdit) {
-    await new FreeTextOperation(edit).applyEdit(this.pdf);
-    return this;
+  async freeText(edit: FreeTextEdit): Promise<SerializableEdit<FreeTextEdit>> {
+    return (await new FreeTextOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   // -----------------------------
@@ -149,9 +144,8 @@ export class PdfDoc {
    * @param edit - The redaction edit configuration containing the rectangle dimensions to redact
    * @returns The PdfDoc instance for method chaining
    */
-  async redact(edit: RedactionEdit) {
-    await new RedactionOperation(edit).applyEdit(this.pdf);
-    return this;
+  async redact(edit: RedactionEdit): Promise<SerializableEdit<RedactionEdit>> {
+    return (await new RedactionOperation(edit).applyEdit(this.pdf)).serialize();
   }
 
   /**
@@ -167,32 +161,8 @@ export class PdfDoc {
    */
   async applyOperations(operations: SerializableEdit<PdfEdit>[]): Promise<this> {
     for (const op of operations) {
-
-      switch (op.edit.type) {
-        case "insert-text":
-          await this.insertText(op.edit as InsertTextEdit);
-          break;
-        case "delete-text":
-          await this.deleteText(op.edit as DeleteTextEdit);
-          break;
-        case "replace-text":
-          await this.replaceText(op.edit as ReplaceTextEdit);
-          break;
-        case "highlight":
-          await this.highlight(op.edit as HighlightEdit);
-          break;
-        case "note":
-          await this.stickyNote(op.edit as StickyNoteEdit);
-          break;
-        case "freeText":
-          await this.freeText(op.edit as FreeTextEdit);
-          break;
-        case "redact":
-          await this.redact(op.edit as RedactionEdit);
-          break;
-        default:
-          throw new Error(`Unknown edit type: ${(op.edit as any).type}`);
-      }
+      const operation = PdfDoc.toEditType<BaseOperation<PdfEdit>>(op);
+      await operation.applyEdit(this.pdf);
     }
 
     // Sync the internal rawData after all operations
@@ -224,5 +194,65 @@ export class PdfDoc {
 
   getVersion() {
     return this.version ?? null;
+  }
+
+  async clone(): Promise<PdfDoc> {
+    const bytes = await this.save();
+    return PdfDoc.load(bytes, this.version);
+  }
+
+  async extractPageAsPdf(pageIndex: number): Promise<PdfDoc> {
+    const newPdfDoc = await PDFDocument.create();
+    const [copiedPage] = await newPdfDoc.copyPages(this.pdf, [pageIndex]);
+    newPdfDoc.addPage(copiedPage);
+    const bytes = await newPdfDoc.save();
+    return PdfDoc.load(bytes);
+  }
+
+  async replacePage(pageIndex: number, newPageDoc: PdfDoc): Promise<void> {
+    const [newPage] = await this.pdf.copyPages(newPageDoc.pdf, [0]);
+    this.pdf.removePage(pageIndex);
+    this.pdf.insertPage(pageIndex, newPage);
+    await this.syncBytes();
+  }
+
+  static toEditType<TClass extends BaseOperation<PdfEdit>>(edit: SerializableEdit<PdfEdit>): TClass {
+    switch (edit.type) {
+        case "insert-text":
+          return new InsertTextOperation(edit as SerializableEdit<InsertTextEdit>) as TClass;
+        case "delete-text":
+          return new DeleteTextOperation(edit as SerializableEdit<DeleteTextEdit>) as TClass;
+        case "replace-text":
+          return new ReplaceTextOperation(edit as SerializableEdit<ReplaceTextEdit>) as TClass;
+        case "highlight":
+          return new HighlightOperation(edit as SerializableEdit<HighlightEdit>) as TClass;
+        case "add-sticky-note":
+          return new AddStickyNoteOperation(edit as SerializableEdit<AddStickyNoteEdit>) as TClass;
+        case "free-text":
+          return new FreeTextOperation(edit as SerializableEdit<FreeTextEdit>) as TClass;
+        case "redact":
+          return new RedactionOperation(edit as SerializableEdit<RedactionEdit>) as TClass;
+        default:
+          throw new Error(`Unknown edit type: ${(edit as SerializableEdit<PdfEdit>).type}`);
+      }
+  }
+
+  /**
+   * Static helper to check if an edit type is page-level without instantiating an operation.
+   * Page-level edits are scoped to a single page.
+   *
+   * @param edit - The serializable edit to check
+   * @returns true if the edit is page-level, false otherwise
+   */
+  static isPageLevelEdit(edit: SerializableEdit<PdfEdit>): boolean {
+    return (
+      edit.type === 'insert-text' ||
+      edit.type === 'delete-text' ||
+      edit.type === 'replace-text' ||
+      edit.type === 'highlight' ||
+      edit.type === 'add-sticky-note' ||
+      edit.type === 'free-text' ||
+      edit.type === 'redact'
+    );
   }
 }
