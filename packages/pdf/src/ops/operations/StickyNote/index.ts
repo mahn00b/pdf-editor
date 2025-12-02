@@ -29,7 +29,7 @@ export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
         position.y + 20,
       ],
       Name: icon,
-      T: author ?? undefined,
+      ...(author ? { T: author } : {}),
       Open: open,
     }
 
