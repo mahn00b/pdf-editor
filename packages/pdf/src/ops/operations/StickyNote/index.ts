@@ -28,8 +28,8 @@ export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
         position.x + 20,
         position.y + 20,
       ],
-      Name: PDFName.of(icon),
-      T: author ? PDFString.of(author) : undefined,
+      Name: icon,
+      ...(author ? { T: author } : {}),
       Open: open,
     }
 

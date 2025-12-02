@@ -67,7 +67,6 @@ export interface HighlightEdit extends BaseEdit {
 
 export interface AddStickyNoteEdit extends BaseEdit {
   type: 'add-sticky-note';
-  page: number;
   position: {
     x: number;
     y: number;
