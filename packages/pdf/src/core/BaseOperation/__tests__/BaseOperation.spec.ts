@@ -168,8 +168,8 @@ describe('BaseOperation', () => {
       const op = new TestOperation(highlightEdit);
       expect(op.isDocumentLevel()).toBe(!op.isPageLevel());
     });
+  });
   it('preserves id and timestamp when constructed with SerializableEdit', () => {
-    const edit: InsertTextEdit = {
       type: 'insert-text',
       page: 0,
       value: 'test',
