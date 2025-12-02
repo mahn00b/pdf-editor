@@ -19,8 +19,8 @@ export class AddStickyNoteOperation extends BaseOperation<AddStickyNoteEdit> {
     const pdfPage: PDFPage = pdfDoc.getPages()[page] as PDFPage;
 
     const annotation = {
-      Type: 'Annot',
-      Subtype: 'Text',
+      Type: PDFName.of('Annot'),
+      Subtype: PDFName.of('Text'),
       Contents: PDFString.of(text),
       Rect: [
         position.x,
